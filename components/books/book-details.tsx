@@ -103,25 +103,31 @@ export function BookDetails({ book }: BookDetailsProps) {
         <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 font-medium">Par: {book.author}</p>
 
         {/* Description */}
-        <div className="mb-8 p-6 md:p-7 bg-primary/5 border border-primary/20 rounded-lg md:rounded-xl hover:border-primary/40 transition-colors">
-          <h3 className="font-semibold text-card-foreground mb-3 text-base md:text-lg">Description</h3>
-          <p className="text-muted-foreground text-pretty text-sm md:text-base leading-relaxed">{book.description}</p>
-        </div>
+        {book.description && (
+          <div className="mb-8 p-6 md:p-7 bg-primary/5 border border-primary/20 rounded-lg md:rounded-xl hover:border-primary/40 transition-colors">
+            <h3 className="font-semibold text-card-foreground mb-3 text-base md:text-lg">Description</h3>
+            <p className="text-muted-foreground text-pretty text-sm md:text-base leading-relaxed">{book.description}</p>
+          </div>
+        )}
 
         {/* Specifications */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="p-4 md:p-5 border border-border rounded-lg md:rounded-xl hover:border-primary/50 transition-colors">
-            <p className="text-xs md:text-sm text-muted-foreground mb-2">Langue</p>
-            <p className="font-semibold text-card-foreground text-sm md:text-base">
-              {book.language === "ar" ? "Arabe" : book.language === "fr" ? "Français" : "Anglais"}
-            </p>
-          </div>
-          <div className="p-4 md:p-5 border border-border rounded-lg md:rounded-xl hover:border-primary/50 transition-colors">
-            <p className="text-xs md:text-sm text-muted-foreground mb-2">Catégorie</p>
-            <p className="font-semibold text-card-foreground text-sm md:text-base">
-              {book.category === "primary" ? "Primaire" : book.category === "secondary" ? "Secondaire" : "Université"}
-            </p>
-          </div>
+          {book.language && (
+            <div className="p-4 md:p-5 border border-border rounded-lg md:rounded-xl hover:border-primary/50 transition-colors">
+              <p className="text-xs md:text-sm text-muted-foreground mb-2">Langue</p>
+              <p className="font-semibold text-card-foreground text-sm md:text-base">
+                {book.language === "ar" ? "Arabe" : book.language === "fr" ? "Français" : "Anglais"}
+              </p>
+            </div>
+          )}
+          {book.category && (
+            <div className="p-4 md:p-5 border border-border rounded-lg md:rounded-xl hover:border-primary/50 transition-colors">
+              <p className="text-xs md:text-sm text-muted-foreground mb-2">Catégorie</p>
+              <p className="font-semibold text-card-foreground text-sm md:text-base">
+                {book.category === "primary" ? "Primaire" : book.category === "secondary" ? "Secondaire" : "Université"}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Price and Actions */}
