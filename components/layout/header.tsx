@@ -42,9 +42,7 @@ export function Header() {
           <Link href="/partner" className="text-foreground hover:text-primary transition-colors font-medium text-sm">
             Devenir Partenaire
           </Link>
-          <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-medium text-sm">
-            Tableau de Bord
-          </Link>
+
         </nav>
 
         {/* Right Side Icons */}
