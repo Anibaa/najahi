@@ -118,6 +118,14 @@ export const mockSliders: SliderItem[] = [
     cta: "Explorer",
     link: "/books",
   },
+    {
+    id: "3",
+    title: "test wis",
+    subtitle: "Découvrez les meilleurs livres pour les étudiants tunisiens",
+    image: "/banner2.png",
+    cta: "Explorer",
+    link: "/books",
+  },
 ]
 
 export const mockPartners: Partner[] = [
