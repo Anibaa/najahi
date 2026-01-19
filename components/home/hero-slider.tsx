@@ -59,7 +59,7 @@ export function HeroSlider({ items }: HeroSliderProps) {
             }`}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
+        <div className="absolute inset-0"></div>
       </div>
 
       {/* Text Content */}
