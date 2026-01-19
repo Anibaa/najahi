@@ -1,5 +1,22 @@
+import dbConnect from "@/lib/db"
+import BookModel from "@/lib/models/book.model"
 import type { Book, SliderItem, Order, Partner } from "./types"
-import { mockBooks, mockSliders, mockOrders, mockPartners } from "./mock-data"
+import { mockSliders, mockOrders, mockPartners } from "./mock-data" // Removed mockBooks
+
+// Helper to sanitize mongoose doc
+const sanitize = (doc: any): Book => {
+  const obj = doc.toObject ? doc.toObject() : doc;
+  obj.id = obj._id ? obj._id.toString() : obj.id;
+  delete obj._id;
+  delete obj.__v;
+  // Ensure descriptionImage is preserved if it exists
+  if (doc.descriptionImage) obj.descriptionImage = doc.descriptionImage;
+
+  // Ensure dates are strings if types.ts expects strings
+  if (obj.createdAt) obj.createdAt = new Date(obj.createdAt).toISOString();
+  // Ensure numeric fields
+  return obj as Book;
+}
 
 // Books API
 export async function getBooks(filters?: {
@@ -7,38 +24,42 @@ export async function getBooks(filters?: {
   level?: string
   language?: string
 }): Promise<Book[]> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await dbConnect();
 
-  let books = [...mockBooks]
+  const query: any = {};
+  if (filters?.category) query.category = filters.category;
+  if (filters?.level) query.level = filters.level;
+  if (filters?.language) query.language = filters.language;
 
-  if (filters?.category) {
-    books = books.filter((b) => b.category === filters.category)
-  }
-  if (filters?.level) {
-    books = books.filter((b) => b.level === filters.level)
-  }
-  if (filters?.language) {
-    books = books.filter((b) => b.language === filters.language)
-  }
-
-  return books
+  const books = await BookModel.find(query).sort({ createdAt: -1 });
+  return books.map(doc => sanitize(doc));
 }
 
 export async function getBookById(id: string): Promise<Book | null> {
-  await new Promise((resolve) => setTimeout(resolve, 100))
-  return mockBooks.find((b) => b.id === id) || null
+  await dbConnect();
+  try {
+    const book = await BookModel.findById(id);
+    return book ? sanitize(book) : null;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function getRelatedBooks(bookId: string, limit = 4): Promise<Book[]> {
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await dbConnect();
+  try {
+    const book = await BookModel.findById(bookId);
+    if (!book) return [];
 
-  const book = mockBooks.find((b) => b.id === bookId)
-  if (!book) return []
+    const related = await BookModel.find({
+      _id: { $ne: bookId },
+      $or: [{ category: book.category }, { level: book.level }]
+    }).limit(limit);
 
-  return mockBooks
-    .filter((b) => b.id !== bookId && (b.category === book.category || b.level === book.level))
-    .slice(0, limit)
+    return related.map(doc => sanitize(doc));
+  } catch (error) {
+    return [];
+  }
 }
 
 // Slider API

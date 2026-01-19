@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getBookById } from "@/lib/api"
-import { mockBooks } from "@/lib/mock-data"
+import dbConnect from "@/lib/db"
+import Book from "@/lib/models/book.model"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -37,11 +38,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await dbConnect()
     const { id } = await params
     const body = await request.json()
 
-    const bookIndex = mockBooks.findIndex((b) => b.id === id)
-    if (bookIndex === -1) {
+    // If images array is provided, use first image as primary if primary not specified properly
+    if (body.images && body.images.length > 0 && !body.image) {
+      body.image = body.images[0]
+    }
+
+    const updatedBook = await Book.findByIdAndUpdate(id, body, { new: true, runValidators: true })
+
+    if (!updatedBook) {
       return NextResponse.json(
         {
           success: false,
@@ -51,28 +59,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       )
     }
 
-    // Update images and primary image
-    const updateData = {
-      ...mockBooks[bookIndex],
-      ...body,
-    }
-
-    // If images array is provided, use first image as primary
-    if (body.images && body.images.length > 0) {
-      updateData.image = body.image || body.images[0]
-    }
-
-    mockBooks[bookIndex] = updateData
-
     return NextResponse.json(
       {
         success: true,
-        data: mockBooks[bookIndex],
+        data: updatedBook,
         message: "Livre mis à jour avec succès",
       },
       { status: 200 },
     )
   } catch (error) {
+    console.error("Update book error:", error)
     return NextResponse.json(
       {
         success: false,
@@ -85,10 +81,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    await dbConnect()
     const { id } = await params
 
-    const bookIndex = mockBooks.findIndex((b) => b.id === id)
-    if (bookIndex === -1) {
+    const deletedBook = await Book.findByIdAndDelete(id)
+
+    if (!deletedBook) {
       return NextResponse.json(
         {
           success: false,
@@ -98,8 +96,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       )
     }
 
-    mockBooks.splice(bookIndex, 1)
-
     return NextResponse.json(
       {
         success: true,
@@ -108,6 +104,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       { status: 200 },
     )
   } catch (error) {
+    console.error("Delete book error:", error)
     return NextResponse.json(
       {
         success: false,

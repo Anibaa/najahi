@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getBooks } from "@/lib/api"
+import dbConnect from "@/lib/db"
+import Book from "@/lib/models/book.model"
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,6 +37,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await dbConnect()
     const body = await request.json()
 
     // Validate required fields
@@ -48,13 +51,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // In a real app, this would save to the database
-    const newBook = {
-      id: Math.random().toString(36).substr(2, 9),
+    const newBook = await Book.create({
       ...body,
+      descriptionImage: body.descriptionImage, // Ensure this is saved
       image: body.image || body.images[0], // Set primary image from first image
-      createdAt: new Date(),
-    }
+    })
 
     return NextResponse.json(
       {
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     )
   } catch (error) {
+    console.error("Create book error:", error)
     return NextResponse.json(
       {
         success: false,

@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { BookDetails } from "@/components/books/book-details"
 import { RelatedBooks } from "@/components/books/related-books"
+import { BookDescriptionImage } from "@/components/books/book-description-image"
 import { ViewTracker } from "@/components/common/view-tracker"
 
 interface BookPageProps {
@@ -66,6 +67,7 @@ export default async function BookPage({ params }: BookPageProps) {
         <section className="py-8 md:py-12">
           <div className="max-w-6xl mx-auto px-4 md:px-8">
             <BookDetails book={book} />
+            <BookDescriptionImage image={book.descriptionImage} alt={book.title} />
             <RelatedBooks books={relatedBooks} />
           </div>
         </section>

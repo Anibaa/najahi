@@ -4,7 +4,6 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Star, ShoppingCart } from "lucide-react"
 import { getRecentlyViewed } from "@/lib/personalization"
-import { getBookById } from "@/lib/api"
 import type { Book } from "@/lib/types"
 
 export function RecentlyViewed() {
@@ -18,8 +17,15 @@ export function RecentlyViewed() {
 
       const recentBooks: Book[] = []
       for (const id of recentIds.slice(0, 4)) {
-        const book = await getBookById(id)
-        if (book) recentBooks.push(book)
+        try {
+          const res = await fetch(`/api/books/${id}`)
+          const data = await res.json()
+          if (data.success && data.data) {
+            recentBooks.push(data.data)
+          }
+        } catch (error) {
+          console.error("Failed to load book:", id)
+        }
       }
       setBooks(recentBooks)
       setIsLoaded(true)

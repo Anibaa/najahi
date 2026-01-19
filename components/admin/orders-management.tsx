@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Eye, Edit2 } from "lucide-react"
 import type { Order } from "@/lib/types"
-import { getBooks } from "@/lib/api"
 import { useEffect } from "react"
 
 interface OrdersManagementProps {
@@ -24,7 +23,14 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
   const [books, setBooks] = useState<any[]>([])
 
   useEffect(() => {
-    getBooks().then(setBooks)
+    fetch("/api/books")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setBooks(data.data)
+        }
+      })
+      .catch((err) => console.error("Failed to load books", err))
   }, [])
 
   const handleViewDetails = (order: Order) => {

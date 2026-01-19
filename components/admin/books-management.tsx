@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Edit2, Trash2, Plus, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import type { Book } from "@/lib/types"
@@ -27,7 +28,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
   })
   const [imageInput, setImageInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const { toast } = useToast()
+  const router = useRouter()
 
   const handleEdit = (book: Book) => {
     setEditingBook(book)
@@ -36,12 +39,27 @@ export function BooksManagement({ books }: BooksManagementProps) {
     setIsModalOpen(true)
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Êtes-vous certain de vouloir supprimer ce livre?")) {
-      toast({
-        title: "Succès",
-        description: "Livre supprimé avec succès",
-      })
+      try {
+        const res = await fetch(`/api/books/${id}`, {
+          method: "DELETE",
+        })
+
+        if (!res.ok) throw new Error("Failed to delete")
+
+        toast({
+          title: "Succès",
+          description: "Livre supprimé avec succès",
+        })
+        router.refresh()
+      } catch (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer le livre",
+          variant: "destructive",
+        })
+      }
     }
   }
 
@@ -69,10 +87,59 @@ export function BooksManagement({ books }: BooksManagementProps) {
   }
 
   const handleRemoveImage = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images?.filter((_, i) => i !== index) || [],
-    }))
+    setFormData((prev) => {
+      const newImages = prev.images?.filter((_, i) => i !== index) || []
+      return {
+        ...prev,
+        images: newImages,
+        image: newImages.length > 0 ? newImages[0] : "", // Sync primary image
+      }
+    })
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'descriptionImage' | 'gallery') => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    const formData = new FormData()
+    formData.append("file", file)
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!res.ok) throw new Error("Upload failed")
+
+      const data = await res.json()
+
+      if (field === 'descriptionImage') {
+        setFormData(prev => ({ ...prev, descriptionImage: data.url }))
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          images: [...(prev.images || []), data.url],
+          image: prev.image || data.url // Set primary if empty
+        }))
+      }
+
+      toast({
+        title: "Succès",
+        description: "Image téléchargée avec succès",
+      })
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Échec du téléchargement",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploading(false)
+      // Reset input value to allow selecting same file again
+      e.target.value = ""
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,20 +156,39 @@ export function BooksManagement({ books }: BooksManagementProps) {
       return
     }
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      const url = editingBook ? `/api/books/${editingBook.id}` : "/api/books"
+      const method = editingBook ? "PUT" : "POST"
 
-    toast({
-      title: "Succès",
-      description: editingBook
-        ? `Livre "${formData.title}" modifié avec succès`
-        : `Livre "${formData.title}" ajouté avec succès`,
-    })
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
 
-    setIsModalOpen(false)
-    setFormData({ images: [] })
-    setEditingBook(null)
-    setIsLoading(false)
+      if (!res.ok) throw new Error("Correction failed")
+
+      toast({
+        title: "Succès",
+        description: editingBook
+          ? `Livre "${formData.title}" modifié avec succès`
+          : `Livre "${formData.title}" ajouté avec succès`,
+      })
+
+      router.refresh()
+      setIsModalOpen(false)
+      setFormData({ images: [] })
+      setEditingBook(null)
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+
   }
 
   return (
@@ -149,7 +235,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
                 <td className="px-6 py-4 text-muted-foreground hidden sm:table-cell text-sm">{book.author}</td>
                 <td className="px-6 py-4 font-bold text-primary">{book.price} DT</td>
                 <td className="px-6 py-4">
-                  <span className={`text-sm font-semibold ${statusColors[book.status]}`}>{book.status}</span>
+                  <span className={`text - sm font - semibold ${statusColors[book.status]}`}>{book.status}</span>
                 </td>
 
                 <td className="px-6 py-4">
@@ -264,6 +350,49 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     <option value="university">Université</option>
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Image Descriptif (URL ou Upload)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      name="descriptionImage"
+                      placeholder="URL de l'image (optionnel)"
+                      value={formData.descriptionImage || ""}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                    />
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(e, 'descriptionImage')}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        disabled={isUploading}
+                      />
+                      <button type="button" className="px-4 py-3 bg-secondary hover:bg-secondary/80 rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem]">
+                        <Plus className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  {formData.descriptionImage && (
+                    <div className="mt-3 relative w-full sm:w-1/2 md:w-1/3 group animate-fadeInUp">
+                      <img
+                        src={formData.descriptionImage}
+                        alt="Aperçu description"
+                        className="w-full aspect-video object-cover rounded-lg border border-border bg-muted"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, descriptionImage: "" }))}
+                        className="absolute top-2 right-2 bg-destructive/90 hover:bg-destructive text-white p-1.5 rounded-full backdrop-blur-sm transition-all hover:scale-110 active:scale-95"
+                        title="Supprimer l'image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -313,11 +442,11 @@ export function BooksManagement({ books }: BooksManagementProps) {
               {/* Image Gallery Management */}
               <div className="border border-primary/20 rounded-lg p-5 bg-primary/5">
                 <label className="block text-sm font-semibold text-foreground mb-4">Galerie d'Images</label>
-                
+
                 {/* Add Image Input */}
                 <div className="flex gap-2 mb-4">
                   <input
-                    type="url"
+                    type="text"
                     placeholder="Ajouter une URL d'image..."
                     value={imageInput}
                     onChange={(e) => setImageInput(e.target.value)}
@@ -329,6 +458,18 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     }}
                     className="flex-1 px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
                   />
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'gallery')}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      disabled={isUploading}
+                    />
+                    <button type="button" className="px-4 py-3 bg-secondary hover:bg-secondary/80 rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem] mr-2" title="Upload">
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={handleAddImage}
@@ -394,8 +535,8 @@ export function BooksManagement({ books }: BooksManagementProps) {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+          </div >
+        </div >
       )}
     </div>
   )

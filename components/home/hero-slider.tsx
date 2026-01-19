@@ -78,14 +78,14 @@ export function HeroSlider({ items }: HeroSliderProps) {
         >
           {currentItem.subtitle}
         </p>
-        <a
+        {/* <a
           href={currentItem.link}
           className={`inline-block px-6 md:px-8 py-3 bg-secondary hover:bg-secondary/90 text-foreground font-semibold rounded-lg transition-all duration-200 w-fit hover:shadow-soft-hover hover:scale-105 active:scale-95 ${
             isTransitioning ? "opacity-0 translate-x-10" : "opacity-100 translate-x-0"
           }`}
         >
           {currentItem.cta}
-        </a>
+        </a> */}
       </div>
 
       {/* Navigation Buttons */}

@@ -96,36 +96,12 @@ export const mockBooks: Book[] = [
 export const mockSliders: SliderItem[] = [
   {
     id: "1",
-    title: "منصتك التعليمية",
-    subtitle: "اكتشف أفضل الكتب للطلاب التونسيين",
-    image: "/educational-banner-arabic.jpg",
-    cta: "تصفح الآن",
-    link: "/books",
-  },
-  {
-    id: "2",
-    title: "Plateforme Éducative",
-    subtitle: "Découvrez les meilleurs livres pour les étudiants tunisiens",
-    image: "/educational-banner-french.jpg",
-    cta: "Explorer",
-    link: "/books",
-  },
-  {
-    id: "3",
-    title: "test wis",
-    subtitle: "Découvrez les meilleurs livres pour les étudiants tunisiens",
-    image: "/banner1.png",
-    cta: "Explorer",
-    link: "/books",
-  },
-    {
-    id: "3",
-    title: "test wis",
-    subtitle: "Découvrez les meilleurs livres pour les étudiants tunisiens",
-    image: "/banner2.png",
-    cta: "Explorer",
-    link: "/books",
-  },
+    title: " ",
+    subtitle: " ",
+    image: "/DEMO-BANNER.png",
+    cta: " ",
+    link: " ",
+  }
 ]
 
 export const mockPartners: Partner[] = [
