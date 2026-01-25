@@ -3,11 +3,11 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Menu, X, BookOpen, ShoppingCart, Sliders, BarChart3, LogOut } from "lucide-react"
+import { Menu, X, BookOpen, ShoppingCart, Sliders, BarChart3, LogOut, Users } from "lucide-react"
 import { clearAdminSession } from "@/lib/admin-auth"
 
 interface AdminNavProps {
-  activeTab: "books" | "orders" | "sliders" | "statistics"
+  activeTab: "books" | "orders" | "sliders" | "partners" | "statistics"
 }
 
 export function AdminNav({ activeTab }: AdminNavProps) {
@@ -19,6 +19,7 @@ export function AdminNav({ activeTab }: AdminNavProps) {
     { id: "books", label: "Livres", icon: BookOpen },
     { id: "orders", label: "Commandes", icon: ShoppingCart },
     { id: "sliders", label: "Promotions", icon: Sliders },
+    { id: "partners", label: "Partenaires", icon: Users },
   ]
 
   const handleLogout = () => {
@@ -40,11 +41,10 @@ export function AdminNav({ activeTab }: AdminNavProps) {
                 <Link
                   key={tab.id}
                   href={`/admin?tab=${tab.id}`}
-                  className={`flex items-center gap-2 pb-2 text-sm md:text-base transition-all duration-200 hover:scale-105 active:scale-95 ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 pb-2 text-sm md:text-base transition-all duration-200 hover:scale-105 active:scale-95 ${activeTab === tab.id
                       ? "border-b-2 border-secondary text-white font-semibold"
                       : "text-white/70 hover:text-white"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   {tab.label}
@@ -81,11 +81,10 @@ export function AdminNav({ activeTab }: AdminNavProps) {
                 <Link
                   key={tab.id}
                   href={`/admin?tab=${tab.id}`}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 ${activeTab === tab.id
                       ? "bg-white/20 font-semibold"
                       : "text-white/80 hover:bg-white/10 hover:text-white"
-                  }`}
+                    }`}
                   onClick={() => setIsOpen(false)}
                 >
                   <Icon className="w-5 h-5" />

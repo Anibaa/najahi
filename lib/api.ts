@@ -2,6 +2,7 @@ import dbConnect from "@/lib/db"
 import BookModel from "@/lib/models/book.model"
 import OrderModel from "@/lib/models/order.model"
 import SliderModel from "@/lib/models/slider.model"
+import PartnerModel from "@/lib/models/partner.model"
 import type { Book, SliderItem, Order, Partner } from "./types"
 import { mockPartners } from "./mock-data"
 
@@ -36,6 +37,15 @@ const sanitizeSlider = (doc: any): SliderItem => {
   delete obj.__v;
   if (obj.createdAt) obj.createdAt = new Date(obj.createdAt).toISOString();
   return obj as SliderItem;
+}
+
+const sanitizePartner = (doc: any): Partner => {
+  const obj = doc.toObject ? doc.toObject() : doc;
+  obj.id = obj._id ? obj._id.toString() : obj.id;
+  delete obj._id;
+  delete obj.__v;
+  if (obj.createdAt) obj.createdAt = new Date(obj.createdAt).toISOString();
+  return obj as Partner;
 }
 
 // Books API
@@ -170,18 +180,25 @@ export async function deleteSlider(id: string): Promise<boolean> {
 
 
 // Partners API
+// Partners API
 export async function getPartners(): Promise<Partner[]> {
-  await new Promise((resolve) => setTimeout(resolve, 100))
-  return mockPartners
+  await dbConnect();
+  const partners = await PartnerModel.find().sort({ createdAt: -1 });
+  return partners.map((doc: any) => sanitizePartner(doc));
 }
 
 export async function createPartner(partner: Omit<Partner, "id" | "createdAt">): Promise<Partner> {
-  await new Promise((resolve) => setTimeout(resolve, 100))
-  const newPartner: Partner = {
-    ...partner,
-    id: Math.random().toString(36).substr(2, 9),
-    createdAt: new Date(),
+  await dbConnect();
+  const created = await PartnerModel.create(partner as any);
+  return sanitizePartner(created);
+}
+
+export async function deletePartner(id: string): Promise<boolean> {
+  await dbConnect();
+  try {
+    const res = await PartnerModel.findByIdAndDelete(id);
+    return !!res;
+  } catch (error) {
+    return false;
   }
-  mockPartners.push(newPartner)
-  return newPartner
 }

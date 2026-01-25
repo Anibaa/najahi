@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { getBooks, getOrders, getSliders } from "@/lib/api"
+import { getBooks, getOrders, getSliders, getPartners } from "@/lib/api"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { AdminNav } from "@/components/admin/admin-nav"
@@ -7,6 +7,7 @@ import { AdminStatistics } from "@/components/admin/admin-statistics"
 import { BooksManagement } from "@/components/admin/books-management"
 import { OrdersManagement } from "@/components/admin/orders-management"
 import { SlidersManagement } from "@/components/admin/sliders-management"
+import { PartnersManagement } from "@/components/admin/partners-management"
 import { AdminGuard } from "@/lib/admin-guard"
 
 interface AdminPageProps {
@@ -22,9 +23,9 @@ export const metadata = {
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams
-  const tab = (params.tab || "books") as "books" | "orders" | "sliders" | "statistics"
+  const tab = (params.tab || "books") as "books" | "orders" | "sliders" | "partners" | "statistics"
 
-  const [books, orders, sliders] = await Promise.all([getBooks(), getOrders(), getSliders()])
+  const [books, orders, sliders, partners] = await Promise.all([getBooks(), getOrders(), getSliders(), getPartners()])
 
   return (
     <AdminGuard>
@@ -55,6 +56,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             {tab === "sliders" && (
               <Suspense fallback={<div className="text-muted-foreground text-sm">Chargement des promotions...</div>}>
                 <SlidersManagement sliders={sliders} />
+              </Suspense>
+            )}
+
+            {tab === "partners" && (
+              <Suspense fallback={<div className="text-muted-foreground text-sm">Chargement des partenaires...</div>}>
+                <PartnersManagement partners={partners} />
               </Suspense>
             )}
           </div>

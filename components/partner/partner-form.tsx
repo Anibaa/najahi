@@ -56,23 +56,28 @@ export function PartnerForm() {
     setStatus("loading")
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      console.log("Partner submission:", formData)
-
-      setStatus("success")
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        bookTitle: "",
-        category: "primary",
-        level: "primary",
-        language: "ar",
-        description: "",
+      const res = await fetch("/api/partners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       })
 
-      setTimeout(() => setStatus("idle"), 5000)
+      if (res.ok) {
+        setStatus("success")
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          bookTitle: "",
+          category: "primary",
+          level: "primary",
+          language: "ar",
+          description: "",
+        })
+        setTimeout(() => setStatus("idle"), 5000)
+      } else {
+        throw new Error("Failed")
+      }
     } catch {
       setStatus("error")
       setTimeout(() => setStatus("idle"), 3000)
@@ -114,9 +119,8 @@ export function PartnerForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            errors.name ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
-          }`}
+          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${errors.name ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
+            }`}
           placeholder="Jean Dupont"
         />
         {errors.name && <p className="text-xs md:text-sm text-destructive mt-2 font-medium">{errors.name}</p>}
@@ -133,9 +137,8 @@ export function PartnerForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            errors.email ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
-          }`}
+          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${errors.email ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
+            }`}
           placeholder="votre@email.com"
         />
         {errors.email && <p className="text-xs md:text-sm text-destructive mt-2 font-medium">{errors.email}</p>}
@@ -152,9 +155,8 @@ export function PartnerForm() {
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            errors.phone ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
-          }`}
+          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${errors.phone ? "border-destructive bg-destructive/5" : "border-border bg-background hover:border-primary/30"
+            }`}
           placeholder="+216 92 123 456"
         />
         {errors.phone && <p className="text-xs md:text-sm text-destructive mt-2 font-medium">{errors.phone}</p>}
@@ -171,11 +173,10 @@ export function PartnerForm() {
           name="bookTitle"
           value={formData.bookTitle}
           onChange={handleChange}
-          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            errors.bookTitle
+          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 ${errors.bookTitle
               ? "border-destructive bg-destructive/5"
               : "border-border bg-background hover:border-primary/30"
-          }`}
+            }`}
           placeholder="Titre du livre"
         />
         {errors.bookTitle && <p className="text-xs md:text-sm text-destructive mt-2 font-medium">{errors.bookTitle}</p>}
@@ -246,11 +247,10 @@ export function PartnerForm() {
           value={formData.description}
           onChange={handleChange}
           rows={6}
-          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${
-            errors.description
+          className={`w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none ${errors.description
               ? "border-destructive bg-destructive/5"
               : "border-border bg-background hover:border-primary/30"
-          }`}
+            }`}
           placeholder="Décrivez le contenu du livre en détail..."
         />
         <div className="flex justify-between items-center mt-2">
