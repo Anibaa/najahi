@@ -170,6 +170,18 @@ export async function updateSlider(id: string, update: Partial<SliderItem>): Pro
 export async function deleteSlider(id: string): Promise<boolean> {
   await dbConnect();
   try {
+    const slider = await SliderModel.findById(id);
+    if (!slider) return false;
+
+    if (slider.image && slider.image.startsWith('http')) {
+      try {
+        const { del } = await import('@vercel/blob');
+        await del(slider.image);
+      } catch (e) {
+        console.error("Failed to delete slider image blob", e);
+      }
+    }
+
     const res = await SliderModel.findByIdAndDelete(id);
     return !!res;
   } catch (error) {

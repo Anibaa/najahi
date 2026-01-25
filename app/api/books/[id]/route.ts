@@ -84,9 +84,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await dbConnect()
     const { id } = await params
 
-    const deletedBook = await Book.findByIdAndDelete(id)
+    // Find book first to get images
+    const bookToDelete = await Book.findById(id);
 
-    if (!deletedBook) {
+    if (!bookToDelete) {
       return NextResponse.json(
         {
           success: false,
@@ -94,6 +95,37 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         },
         { status: 404 },
       )
+    }
+
+    const deletedBook = await Book.findByIdAndDelete(id)
+
+    // Delete associated images from Vercel Blob
+    if (deletedBook) {
+      const imagesToDelete = [...(deletedBook.images || [])];
+      if (deletedBook.descriptionImage) {
+        imagesToDelete.push(deletedBook.descriptionImage);
+      }
+
+      // Filter for blob URLs if necessary, or just attempt delete.
+      // Vercel blob URLs usually contain the token or specific domain. 
+      // We attempt to delete any full URL.
+      const validUrls = imagesToDelete.filter(url => url && url.startsWith('http'));
+
+      if (validUrls.length > 0) {
+        try {
+          // Dynamic import to avoid issues if not used elsewhere, or just import at top?
+          // Better to import at top. I will add import statement in a separate edit or assume the user accepts full file replacement.
+          // Since I am replacing this block, I need to make sure 'del' is imported.
+          // I will use a separate import at the top of the file in the next step or use require?
+          // Typescript requires import. 
+          // I'll add the import to the top of the file in a separate tool call first or do a full file replace.
+          // I'll do a MultiReplace or just ensure I add the import.
+          const { del } = await import('@vercel/blob');
+          await Promise.all(validUrls.map(url => del(url)));
+        } catch (err) {
+          console.error("Failed to delete blob images:", err);
+        }
+      }
     }
 
     return NextResponse.json(
