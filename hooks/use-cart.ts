@@ -26,8 +26,47 @@ export function useCart() {
   useEffect(() => {
     if (!isLoading) {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
+      // Notify other listeners in the same window (storage event doesn't fire in same window)
+      try {
+        const event = new CustomEvent("tunitest_cart_updated", { detail: cart })
+        window.dispatchEvent(event)
+      } catch (e) {
+        // ignore
+      }
     }
   }, [cart, isLoading])
+
+  // Listen for storage changes (other tabs) and custom events (same tab)
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === CART_STORAGE_KEY) {
+        try {
+          setCart(e.newValue ? JSON.parse(e.newValue) : [])
+        } catch (err) {
+          console.error("Failed to parse cart from storage event:", err)
+        }
+      }
+    }
+
+    const onCustom = (e: Event) => {
+      try {
+        // CustomEvent with detail contains cart array
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ce = e as CustomEvent<any>
+        setCart(ce.detail ?? [])
+      } catch (err) {
+        console.error("Failed to handle custom cart event:", err)
+      }
+    }
+
+    window.addEventListener("storage", onStorage)
+    window.addEventListener("tunitest_cart_updated", onCustom)
+
+    return () => {
+      window.removeEventListener("storage", onStorage)
+      window.removeEventListener("tunitest_cart_updated", onCustom)
+    }
+  }, [])
 
   const addToCart = useCallback((book: Book, quantity = 1) => {
     setCart((prevCart) => {

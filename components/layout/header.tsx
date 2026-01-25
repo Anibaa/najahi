@@ -3,10 +3,14 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ShoppingCart, Menu, X } from "lucide-react"
-import Image from "next/image"  
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useCart } from "@/hooks/use-cart"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router = useRouter()
+  const { cart } = useCart()
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-soft">
@@ -47,11 +51,18 @@ export function Header() {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-muted rounded-lg transition-all duration-200 relative group">
+          <button 
+            onClick={() => router.push("/cart")}
+            className="p-2 hover:bg-muted rounded-lg transition-all duration-200 relative group"
+          >
             <ShoppingCart className="w-5 h-5 text-foreground" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full animate-pulse"></span>
+            {cart.length > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-accent rounded-full flex items-center justify-center text-xs font-bold text-white">
+                {cart.length}
+              </span>
+            )}
             <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-foreground text-background px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Panier (0)
+              Panier ({cart.length})
             </span>
           </button>
           <button
