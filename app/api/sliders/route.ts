@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getSliders, createSlider } from "@/lib/api"
+import { revalidatePath } from "next/cache"
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,6 +47,9 @@ export async function POST(request: NextRequest) {
       cta: body.cta || "",
       link: body.link || "",
     })
+
+    revalidatePath("/")
+    revalidatePath("/admin")
 
     return NextResponse.json(
       {

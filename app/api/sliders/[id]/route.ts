@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getSliderById, updateSlider, deleteSlider } from "@/lib/api"
+import { revalidatePath } from "next/cache"
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -16,6 +17,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         { status: 404 },
       )
     }
+
+    revalidatePath("/")
+    revalidatePath("/admin")
 
     return NextResponse.json(
       {
@@ -50,6 +54,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         { status: 404 },
       )
     }
+
+    revalidatePath("/")
+    revalidatePath("/admin")
 
     return NextResponse.json(
       {
