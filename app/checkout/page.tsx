@@ -154,7 +154,6 @@ export default function CheckoutPage() {
                         <input
                           type="email"
                           name="email"
-                          required
                           value={formData.email}
                           onChange={handleChange}
                           className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"

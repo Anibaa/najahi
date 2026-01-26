@@ -5,7 +5,7 @@ const OrderSchema = new Schema({
     quantities: { type: [Number], required: true },
     totalPrice: { type: Number, required: true },
     customerName: { type: String, required: true },
-    customerEmail: { type: String, required: true },
+    customerEmail: { type: String },
     customerPhone: { type: String, required: true },
     address: { type: String, required: true },
     paymentMethod: { type: String, default: 'Card' },

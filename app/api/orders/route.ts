@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
       !body.bookIds ||
       !body.quantities ||
       !body.customerName ||
-      !body.customerEmail ||
       !body.customerPhone ||
       !body.address
     ) {
@@ -50,7 +49,7 @@ export async function POST(request: NextRequest) {
       quantities: body.quantities,
       totalPrice: body.totalPrice,
       customerName: body.customerName,
-      customerEmail: body.customerEmail,
+      customerEmail: body.customerEmail || "",
       customerPhone: body.customerPhone,
       address: body.address,
       paymentMethod: body.paymentMethod || "Card",
