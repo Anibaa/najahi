@@ -12,7 +12,7 @@ import { WhatsAppContact } from "@/components/about/whatsapp-contact"
 export const metadata: Metadata = {
   title: "À propos de Tunitest – Livres scolaires en Tunisie",
   description:
-    "Découvrez la mission et la vision de Tunitest, la plateforme qui accompagne les étudiants tunisiens vers la réussite avec accès à des livres scolaires et universitaires.",
+    "Découvrez la mission et la vision de Tunitest, la plateforme qui accompagne les étudiants tunisiens vers la réussite avec accès à des livres scolaires.",
   keywords: ["à propos", "Tunitest", "mission", "vision", "éducation", "tunisie"],
   openGraph: {
     type: "website",

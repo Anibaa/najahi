@@ -1,5 +1,5 @@
 export type Category = "writing" | "cours" | "devoirs" | "histoire"
-export type Level = "primary" | "secondary" | "university"
+export type Level = "college" | "lycee" | "preparatoire"
 export type Language = "ar" | "fr" | "en"
 
 export type BookStatus = "En stock" | "Hors stock" | "Préparation" | "Livraison" | "Livré"

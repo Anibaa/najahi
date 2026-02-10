@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 export function FilterSidebar() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   // Search state
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "")
   const [isSearching, setIsSearching] = useState(false)
@@ -37,20 +37,20 @@ export function FilterSidebar() {
   // Optimized search handler with useCallback
   const handleSearch = useCallback((query: string) => {
     setIsSearching(true)
-    
+
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current)
     }
 
     searchTimeoutRef.current = setTimeout(() => {
       const params = new URLSearchParams(searchParams)
-      
+
       if (query.trim()) {
         params.set("search", query.trim())
       } else {
         params.delete("search")
       }
-      
+
       params.delete("page")
       router.push(`/books?${params.toString()}`)
       setIsSearching(false)
@@ -71,14 +71,14 @@ export function FilterSidebar() {
   // Optimized filter change handler
   const handleFilterChange = useCallback((key: string, value: string) => {
     const params = new URLSearchParams(searchParams)
-    
+
     // For radio buttons, always set the new value (no toggle)
     if (value) {
       params.set(key, value)
     } else {
       params.delete(key)
     }
-    
+
     params.delete("page")
     router.push(`/books?${params.toString()}`)
   }, [router, searchParams])
@@ -97,9 +97,9 @@ export function FilterSidebar() {
       { value: "histoire" as Category, label: "Histoire", icon: "📜", shortLabel: "Histoire" },
     ],
     levels: [
-      { value: "primary" as Level, label: "Primaire", icon: "🎒", shortLabel: "1° Prim." },
-      { value: "secondary" as Level, label: "Secondaire", icon: "📓", shortLabel: "2° Second." },
-      { value: "university" as Level, label: "Université", icon: "🎓", shortLabel: "Univ" },
+      { value: "college" as Level, label: "Collège", icon: "🎒", shortLabel: "Collège" },
+      { value: "lycee" as Level, label: "Lycée", icon: "📓", shortLabel: "Lycée" },
+      { value: "preparatoire" as Level, label: "Préparatoire", icon: "🧠", shortLabel: "Prépa" },
     ],
     languages: [
       { value: "ar" as Language, label: "العربية", icon: "🇹🇳", shortLabel: "AR" },
@@ -173,8 +173,8 @@ export function FilterSidebar() {
                       onClick={() => handleFilterChange("category", isSelected ? "" : item.value)}
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 border",
-                        isSelected 
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105" 
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
                           : "bg-background hover:bg-muted border-border hover:border-primary/30 hover:scale-105"
                       )}
                     >
@@ -198,8 +198,8 @@ export function FilterSidebar() {
                       onClick={() => handleFilterChange("level", isSelected ? "" : item.value)}
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 border",
-                        isSelected 
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105" 
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
                           : "bg-background hover:bg-muted border-border hover:border-primary/30 hover:scale-105"
                       )}
                     >
@@ -223,8 +223,8 @@ export function FilterSidebar() {
                       onClick={() => handleFilterChange("language", isSelected ? "" : item.value)}
                       className={cn(
                         "flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 border",
-                        isSelected 
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105" 
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
                           : "bg-background hover:bg-muted border-border hover:border-primary/30 hover:scale-105"
                       )}
                     >
@@ -270,8 +270,8 @@ export function FilterSidebar() {
               onClick={() => handleFilterChange(filterKey, isSelected ? "" : item.value)}
               className={cn(
                 "w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 group border-2",
-                isSelected 
-                  ? "bg-primary text-primary-foreground shadow-lg border-primary/30 scale-[1.02]" 
+                isSelected
+                  ? "bg-primary text-primary-foreground shadow-lg border-primary/30 scale-[1.02]"
                   : "bg-muted/20 hover:bg-muted/40 border-transparent hover:scale-[1.01] hover:shadow-md hover:border-border/50"
               )}
             >

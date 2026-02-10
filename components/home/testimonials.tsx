@@ -4,13 +4,13 @@ export function Testimonials() {
   const testimonials = [
     {
       name: "Fatima Mahmoud",
-      role: "Étudiante Universitaire",
+      role: "Étudiante en Classe Prépa",
       content: "Plateforme formidable qui m'a aidée à trouver les livres dont j'avais besoin à des prix abordables",
       rating: 5,
     },
     {
       name: "Ali Saadi",
-      role: "Étudiant Secondaire",
+      role: "Étudiant au Lycée",
       content: "Service excellent et livraison rapide, je reviens certainement",
       rating: 5,
     },
@@ -43,13 +43,12 @@ export function Testimonials() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${
-                      i < Math.floor(testimonial.rating)
+                    className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${i < Math.floor(testimonial.rating)
                         ? "fill-secondary text-secondary group-hover:scale-110"
                         : i < testimonial.rating
                           ? "fill-secondary text-secondary group-hover:scale-110"
                           : "fill-muted text-muted"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>

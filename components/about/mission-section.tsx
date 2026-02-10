@@ -15,7 +15,7 @@ export function MissionSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground">Notre Mission</h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Notre mission est de rendre l'accès aux livres scolaires et universitaires simple, rapide et abordable pour
+            Notre mission est de rendre l'accès aux livres scolaires simple, rapide et abordable pour
             tous les étudiants en Tunisie.
           </p>
         </motion.div>

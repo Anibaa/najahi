@@ -56,19 +56,19 @@ export function BooksManagement({ books }: BooksManagementProps) {
           title: "Succès",
           description: "Livre supprimé avec succès",
         })
-        
+
         // Refresh the current page
         router.refresh()
-        
+
         // Also trigger a refresh of the home page cache
-        fetch('/', { 
+        fetch('/', {
           method: 'GET',
           cache: 'no-store',
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate'
           }
-        }).catch(() => {}) // Silent fail if this doesn't work
-        
+        }).catch(() => { }) // Silent fail if this doesn't work
+
       } catch (error) {
         toast({
           title: "Erreur",
@@ -130,7 +130,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
         image: newImages.length > 0 ? newImages[0] : "", // Sync primary image
       }
     })
-    
+
     // Delete from Vercel Blob if it's a blob URL
     if (imageToRemove && imageToRemove.includes('blob.vercel-storage.com')) {
       deleteFromBlob(imageToRemove)
@@ -143,7 +143,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
       ...prev,
       descriptionImages: prev.descriptionImages?.filter((_, i) => i !== index) || [],
     }))
-    
+
     // Delete from Vercel Blob if it's a blob URL
     if (imageToRemove && imageToRemove.includes('blob.vercel-storage.com')) {
       deleteFromBlob(imageToRemove)
@@ -249,15 +249,15 @@ export function BooksManagement({ books }: BooksManagementProps) {
 
       // Refresh the current page and clear cache
       router.refresh()
-      
+
       // Also trigger a refresh of the home page cache
-      fetch('/', { 
+      fetch('/', {
         method: 'GET',
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
-      }).catch(() => {}) // Silent fail if this doesn't work
+      }).catch(() => { }) // Silent fail if this doesn't work
 
       setIsModalOpen(false)
       setFormData({ images: [], descriptionImages: [] })
@@ -440,9 +440,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   >
                     <option value="" disabled>Choisir un niveau</option>
-                    <option value="primary">Primaire</option>
-                    <option value="secondary">Secondaire</option>
-                    <option value="university">Université</option>
+                    <option value="college">Collège</option>
+                    <option value="lycee">Lycée</option>
+                    <option value="preparatoire">Préparatoire</option>
                   </select>
                 </div>
 
@@ -523,9 +523,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       disabled={isUploadingGallery}
                     />
-                    <button 
-                      type="button" 
-                      className={`px-4 py-3 ${isUploadingGallery ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem] mr-2`} 
+                    <button
+                      type="button"
+                      className={`px-4 py-3 ${isUploadingGallery ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem] mr-2`}
                       title="Upload"
                       disabled={isUploadingGallery}
                     >
@@ -602,9 +602,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           disabled={isUploadingDescription}
                         />
-                        <button 
-                          type="button" 
-                          className={`px-4 py-3 ${isUploadingDescription ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem]`} 
+                        <button
+                          type="button"
+                          className={`px-4 py-3 ${isUploadingDescription ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem]`}
                           title="Upload"
                           disabled={isUploadingDescription}
                         >

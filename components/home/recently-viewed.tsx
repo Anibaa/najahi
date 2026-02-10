@@ -78,7 +78,7 @@ export function RecentlyViewed() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-lg md:text-xl font-bold text-primary">{book.price} DT</span>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                    {book.level === "primary" ? "Primaire" : book.level === "secondary" ? "Secondaire" : "Université"}
+                    {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Préparatoire"}
                   </span>
                 </div>
               </div>

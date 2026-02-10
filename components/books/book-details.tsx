@@ -85,11 +85,11 @@ export function BookDetails({ book }: BookDetailsProps) {
         {/* Badges */}
         <div className="flex flex-wrap gap-2 mb-6">
           <span className="text-xs md:text-sm text-white bg-primary px-3 py-1 rounded-full font-semibold">
-            {book.level === "primary"
-              ? "Niveau Primaire"
-              : book.level === "secondary"
-                ? "Niveau Secondaire"
-                : "Niveau Université"}
+            {book.level === "college"
+              ? "Niveau Collège"
+              : book.level === "lycee"
+                ? "Niveau Lycée"
+                : "Niveau Préparatoire"}
           </span>
           <span className="text-xs md:text-sm text-foreground bg-accent px-3 py-1 rounded-full font-semibold">
             {book.language === "ar" ? "Arabe" : book.language === "fr" ? "Français" : "English"}
