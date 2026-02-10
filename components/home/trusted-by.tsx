@@ -1,59 +1,58 @@
-import Image from "next/image"
+import { Building2 } from "lucide-react"
 
 const PARTNERS = [
-    { name: "Ministère de l'Éducation", logo: "/logo.png" },
-    { name: "CNP", logo: "/placeholder.svg" },
-    { name: "Université de Tunis", logo: "/placeholder.svg" },
-    { name: "Institut Français", logo: "/placeholder.svg" },
-
+    "Anas School",
+    "Manaret El Mourouj",
+    "Lamis School",
+    "Fatima Zahra",
+    "Mongil School",
 ]
 
 export function TrustedBy() {
     return (
-        <section className="border-y border-border/50 bg-muted/10 py-12 md:py-20 px-4 md:px-8">
-            <div className="mx-auto max-w-6xl">
+        <section className="border-y border-border/50 bg-gradient-to-b from-muted/20 to-muted/5 py-10 md:py-24 px-4 md:px-8">
+            <div className="mx-auto max-w-7xl">
 
                 {/* Title */}
-                <div className="mb-8 md:mb-10 text-center">
-                    <h3 className="text-sm md:text-base font-semibold tracking-wide text-foreground uppercase opacity-70">
+                <div className="mb-6 md:mb-14 text-center">
+                    <span className="inline-flex items-center justify-center p-1.5 md:p-2 mb-3 md:mb-4 rounded-full bg-primary/10 text-primary">
+                        <Building2 className="w-4 h-4 md:w-5 md:h-5" />
+                    </span>
+                    <h3 className="text-xl md:text-3xl font-bold tracking-tight text-foreground">
                         Ils nous font confiance
                     </h3>
-                    <p className="mt-2 text-xs md:text-sm text-muted-foreground">
-                        Institutions et partenaires officiels
+                    <p className="mt-2 md:mt-3 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
+                        Les établissements d'excellence qui ont choisi nos solutions éducatives
                     </p>
                 </div>
 
-                {/* Logos */}
-                <ul
-                    role="list"
+                {/* Names */}
+                <div
                     className="
-            flex flex-wrap items-center justify-center
-            gap-8 md:gap-16
-          "
+                        flex flex-wrap items-center justify-center
+                        gap-x-4 gap-y-3 md:gap-x-16 md:gap-y-10
+                    "
                 >
-                    {PARTNERS.map((partner) => (
-                        <li
-                            key={partner.name}
-                            className="
-                relative
-                h-10 w-14 md:h-14 md:w-40
-              "
+                    {PARTNERS.map((name) => (
+                        <div
+                            key={name}
+                            className="group relative"
                         >
-                            <Image
-                                src={partner.logo}
-                                alt={partner.name}
-                                fill
-                                sizes="(max-width: 768px) 112px, 160px"
+                            <span
                                 className="
-                  object-contain
-                  grayscale opacity-60
-                  transition-all duration-300
-                  hover:grayscale-0 hover:opacity-100 hover:scale-105
-                "
-                            />
-                        </li>
+                                    text-sm md:text-xl font-medium text-muted-foreground/80
+                                    transition-all duration-300 ease-in-out
+                                    group-hover:text-primary group-hover:scale-105
+                                    cursor-default inline-block
+                                "
+                            >
+                                {name}
+                            </span>
+                            {/* Subtle underline effect on hover */}
+                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full opacity-50" />
+                        </div>
                     ))}
-                </ul>
+                </div>
 
             </div>
         </section>

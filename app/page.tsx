@@ -46,6 +46,9 @@ export default async function Home() {
         {/* Categories */}
         <CategorySection />
 
+        {/* Trusted By */}
+        <TrustedBy />
+
         {/* Featured Books */}
         <FeaturedBooks books={books.slice(0, 8)} />
 
@@ -54,9 +57,6 @@ export default async function Home() {
 
         {/* Promotion Banner */}
         <PromotionBanner />
-
-        {/* Trusted By */}
-        <TrustedBy />
 
         {/* Testimonials */}
         <Testimonials />
