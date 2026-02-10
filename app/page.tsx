@@ -9,6 +9,7 @@ import { Testimonials } from "@/components/home/testimonials"
 import { PersonalizedGreeting } from "@/components/home/personalized-greeting"
 import { RecentlyViewed } from "@/components/home/recently-viewed"
 import { WhatsAppButton } from "@/components/home/whatsapp-button"
+import { TrustedBy } from "@/components/home/trusted-by"
 
 export const metadata = {
   title: "Tunitest - Plateforme de Livres Éducatifs Tunisienne",
@@ -53,6 +54,9 @@ export default async function Home() {
 
         {/* Promotion Banner */}
         <PromotionBanner />
+
+        {/* Trusted By */}
+        <TrustedBy />
 
         {/* Testimonials */}
         <Testimonials />
