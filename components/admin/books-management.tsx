@@ -448,7 +448,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     <option value="writing">Writing</option>
                     <option value="cours">Cours</option>
                     <option value="devoirs">Devoirs</option>
-                    <option value="histoire">Histoire</option>
+                    <option value="Contes">Contes</option>
                   </select>
                 </div>
                 <div>

@@ -1,4 +1,4 @@
-export type Category = "writing" | "cours" | "devoirs" | "histoire"
+export type Category = "writing" | "cours" | "devoirs" | "Contes"
 export type Level = "college" | "lycee" | "preparatoire"
 export type Language = "ar" | "fr" | "en"
 
