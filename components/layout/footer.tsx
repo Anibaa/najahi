@@ -56,14 +56,8 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-sm md:text-base">Suivez-Nous</h4>
             <div className="flex gap-4">
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="Facebook">
+              <a href="https://www.facebook.com/share/1HuMXLLhdf/?mibextid=wwXIfr" className="hover:opacity-80 transition-opacity" aria-label="Facebook">
                 <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="Twitter">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="Instagram">
-                <Instagram className="w-5 h-5" />
               </a>
             </div>
           </div>

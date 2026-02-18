@@ -3,9 +3,9 @@ import { Star } from "lucide-react"
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Fatima Mahmoud",
+      name: "Landolsi Boutheina",
       role: "Parent",
-      content: "Plateforme formidable qui m'a aidée à trouver les livres dont j'avais besoin à des prix abordables",
+      content: "Merci infiniment pour votre exellent travail.. Bonne continuation",
       rating: 5,
     },
     {
