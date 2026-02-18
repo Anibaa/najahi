@@ -17,7 +17,7 @@ export function Header() {
       {/* Top Banner */}
       <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm font-medium flex justify-center items-center gap-2">
         <span>📞</span>
-        <span>Appelez-nous au +216 53 386 886</span>
+        <span>Appelez-nous au +216 97 240 542</span>
       </div>
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
