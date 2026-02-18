@@ -102,12 +102,7 @@ export function Header() {
             >
               Devenir Partenaire
             </Link>
-            <Link
-              href="/admin"
-              className="block px-4 py-2 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors font-medium"
-            >
-              Tableau de Bord
-            </Link>
+
           </nav>
         </div>
       )}

@@ -64,8 +64,11 @@ export function Footer() {
         </div>
 
         <div className="border-t border-background/20 pt-8">
-          <p className="text-center text-sm opacity-80">© 2026 Tunitest. Tous droits réservés.</p>
+          <p className="text-center text-sm opacity-80">
+            © 2026 Tunitest. Tous droits réservés. — Developed by Yassine Aniba
+          </p>
         </div>
+
       </div>
     </footer>
   )

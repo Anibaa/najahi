@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
               </button>
             </form>
 
-            <p className="text-center text-xs text-muted-foreground mt-4">Démo: admin / admin123</p>
+            {/* <p className="text-center text-xs text-muted-foreground mt-4">Démo: admin / admin123</p> */}
 
             <div className="mt-6 pt-6 border-t border-border">
               <Link href="/" className="text-center block text-sm text-primary hover:text-primary/80 transition-colors">
