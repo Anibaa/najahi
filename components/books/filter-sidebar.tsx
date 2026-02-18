@@ -99,7 +99,7 @@ export function FilterSidebar() {
     levels: [
       { value: "college" as Level, label: "Collège", icon: "🎒", shortLabel: "Collège" },
       { value: "lycee" as Level, label: "Lycée", icon: "📓", shortLabel: "Lycée" },
-      { value: "preparatoire" as Level, label: "Préparatoire", icon: "🧠", shortLabel: "Prépa" },
+      { value: "primaire" as Level, label: "Primaire", icon: "🧠", shortLabel: "Prépa" },
     ],
     languages: [
       { value: "ar" as Language, label: "العربية", icon: "🇹🇳", shortLabel: "AR" },

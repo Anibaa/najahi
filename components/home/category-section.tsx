@@ -6,6 +6,13 @@ import { BookOpen, GraduationCap, BookMarked } from "lucide-react"
 export function CategorySection() {
   const categories = [
     {
+      id: "primaire",
+      label: "Primaire",
+      icon: BookMarked,
+      description: "Références et livres pour les classes Primaires",
+      href: "/books?level=primaire",
+    },
+    {
       id: "college",
       label: "Collège",
       icon: BookOpen,
@@ -19,13 +26,7 @@ export function CategorySection() {
       description: "Contenu éducatif complet pour le lycée",
       href: "/books?level=lycee",
     },
-    {
-      id: "preparatoire",
-      label: "Préparatoire",
-      icon: BookMarked,
-      description: "Références et livres pour les classes préparatoires",
-      href: "/books?level=preparatoire",
-    },
+
   ]
 
   return (

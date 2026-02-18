@@ -93,7 +93,7 @@ export function RecentlyViewed() {
                     </span>
                   ) : (
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                      {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Préparatoire"}
+                      {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Primaire"}
                     </span>
                   )}
                 </div>

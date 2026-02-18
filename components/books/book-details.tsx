@@ -89,7 +89,7 @@ export function BookDetails({ book }: BookDetailsProps) {
               ? "Niveau Collège"
               : book.level === "lycee"
                 ? "Niveau Lycée"
-                : "Niveau Préparatoire"}
+                : "Niveau Primaire"}
           </span>
           <span className="text-xs md:text-sm text-foreground bg-accent px-3 py-1 rounded-full font-semibold">
             {book.language === "ar" ? "Arabe" : book.language === "fr" ? "Français" : "English"}

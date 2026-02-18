@@ -75,7 +75,7 @@ export function FeaturedBooks({ books }: FeaturedBooksProps) {
                     </span>
                   ) : (
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
-                      {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Préparatoire"}
+                      {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Primaire"}
                     </span>
                   )}
                 </div>

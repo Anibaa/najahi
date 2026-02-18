@@ -222,7 +222,7 @@ export function PartnerForm() {
             <option value="" disabled>Choisir un niveau</option>
             <option value="college">Collège</option>
             <option value="lycee">Lycée</option>
-            <option value="preparatoire">Préparatoire</option>
+            <option value="primaire">Primaire</option>
           </select>
         </div>
 
