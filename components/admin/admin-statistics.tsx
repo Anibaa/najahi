@@ -18,7 +18,12 @@ export function AdminStatistics({ books, orders }: AdminStatisticsProps) {
   const stats = [
     { label: "Livres Totaux", value: totalBooks, icon: BookOpen, color: "text-blue-500" },
     { label: "Commandes", value: totalOrders, icon: ShoppingBag, color: "text-green-500" },
-    { label: "Chiffre d'affaires", value: `${totalRevenue.toFixed(2)} DT`, icon: DollarSign, color: "text-amber-500" },
+    {
+      label: "Chiffre d'affaires",
+      value: `${totalRevenue.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DT`, // Format to handle large numbers better
+      icon: DollarSign,
+      color: "text-amber-500",
+    },
     { label: "En Stock", value: inStock, icon: TrendingUp, color: "text-emerald-500" },
   ]
 
@@ -36,11 +41,13 @@ export function AdminStatistics({ books, orders }: AdminStatisticsProps) {
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">{stat.label}</p>
-                  <p className="text-3xl font-bold text-foreground mt-2">{stat.value}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-muted-foreground text-sm font-medium truncate">{stat.label}</p>
+                  <p className="text-2xl font-bold text-foreground mt-2 break-words" title={String(stat.value)}>
+                    {stat.value}
+                  </p>
                 </div>
-                <Icon className={`w-10 h-10 ${stat.color} opacity-20`} />
+                <Icon className={`w-10 h-10 ${stat.color} opacity-20 flex-shrink-0 ml-2`} />
               </div>
             </div>
           )

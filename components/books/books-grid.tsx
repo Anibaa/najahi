@@ -70,11 +70,32 @@ export function BooksGrid({ books, searchQuery }: BooksGridProps) {
 
 
 
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-lg md:text-xl font-bold text-primary">{book.price} DT</span>
-              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                {book.level === "primary" ? "Primaire" : book.level === "secondary" ? "Secondaire" : "Université"}
-              </span>
+            {/* Price section with promo support */}
+            <div className="flex items-center justify-between gap-2 mt-auto">
+              <div>
+                {book.promoPrice ? (
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg md:text-xl font-bold text-red-600 animate-pulse">{book.promoPrice} DT</span>
+                      <span className="text-xs md:text-sm text-muted-foreground line-through">{book.price} DT</span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-lg md:text-xl font-bold text-primary">{book.price} DT</span>
+                )}
+              </div>
+
+              {book.promoPrice && (
+                <span className="text-xs font-bold text-white bg-red-600 px-2 py-1 rounded-full animate-bounce-subtle">
+                  -{Math.round(((book.price - book.promoPrice) / book.price) * 100 / 5) * 5}%
+                </span>
+              )}
+
+              {!book.promoPrice && (
+                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                  {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Primaire"}
+                </span>
+              )}
             </div>
           </div>
         </div>

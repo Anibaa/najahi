@@ -1,5 +1,5 @@
-export type Category = "writing" | "cours" | "devoirs" | "histoire"
-export type Level = "primary" | "secondary" | "university"
+export type Category = "writing" | "cours" | "devoirs" | "Contes"
+export type Level = "college" | "lycee" | "primaire"
 export type Language = "ar" | "fr" | "en"
 
 export type BookStatus = "En stock" | "Hors stock" | "Préparation" | "Livraison" | "Livré"
@@ -13,6 +13,7 @@ export interface Book {
   level: Level
   language: Language
   price: number
+  promoPrice?: number // Optional promotional price
   image: string
   images: string[] // Multiple images for gallery
   description: string

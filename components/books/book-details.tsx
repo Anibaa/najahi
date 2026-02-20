@@ -85,11 +85,11 @@ export function BookDetails({ book }: BookDetailsProps) {
         {/* Badges */}
         <div className="flex flex-wrap gap-2 mb-6">
           <span className="text-xs md:text-sm text-white bg-primary px-3 py-1 rounded-full font-semibold">
-            {book.level === "primary"
-              ? "Niveau Primaire"
-              : book.level === "secondary"
-                ? "Niveau Secondaire"
-                : "Niveau Université"}
+            {book.level === "college"
+              ? "Niveau Collège"
+              : book.level === "lycee"
+                ? "Niveau Lycée"
+                : "Niveau Primaire"}
           </span>
           <span className="text-xs md:text-sm text-foreground bg-accent px-3 py-1 rounded-full font-semibold">
             {book.language === "ar" ? "Arabe" : book.language === "fr" ? "Français" : "English"}
@@ -145,8 +145,23 @@ export function BookDetails({ book }: BookDetailsProps) {
         </div>
 
         {/* Price and Actions */}
-        <div className="mb-8 p-6 md:p-8 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-lg md:rounded-xl hover:border-primary/40 transition-colors">
-          <div className="text-4xl md:text-5xl font-bold text-primary mb-6">{book.price} DT</div>
+        <div className="mb-8 p-6 md:p-8 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-lg md:rounded-xl hover:border-primary/40 transition-colors relative overflow-hidden">
+          {book.promoPrice && (
+            <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md animate-pulse">
+              -{Math.round(((book.price - book.promoPrice) / book.price) * 100 / 5) * 5}%
+            </div>
+          )}
+
+          <div className="flex items-end gap-3 mb-6">
+            <div className="text-4xl md:text-5xl font-bold text-primary">
+              {book.promoPrice ? `${book.promoPrice} DT` : `${book.price} DT`}
+            </div>
+            {book.promoPrice && (
+              <div className="text-xl md:text-2xl text-muted-foreground line-through mb-2 opacity-70">
+                {book.price} DT
+              </div>
+            )}
+          </div>
 
           <div className="flex items-center gap-3 mb-6">
             <button

@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { MessageCircle } from "lucide-react"
 
 export function WhatsAppContact() {
-  const whatsappLink = "https://wa.me/216XXXXXXXX?text=Bonjour%20Tunitest,%20j'aimerais%20avoir%20plus%20d'informations"
+  const whatsappLink = "https://wa.me/21697240542?text=Bonjour%20Tunitest,%20j'aimerais%20avoir%20plus%20d'informations"
 
   return (
     <section className="px-4 md:px-8 py-12 md:py-20 bg-muted/50">

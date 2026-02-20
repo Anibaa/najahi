@@ -9,9 +9,9 @@ export function PersonalizedGreeting() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg md:rounded-xl p-6 md:p-8 animate-slideUp mb-8">
-      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{getGreeting()}</h2>
-      <p className="text-muted-foreground text-sm md:text-base">
+    <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg md:rounded-xl p-4 md:p-8 animate-slideUp mb-8">
+      <h2 className="text-xl md:text-3xl font-bold text-foreground mb-2">{getGreeting()}</h2>
+      <p className="text-muted-foreground text-xs md:text-base">
         Explorez notre collection de livres éducatifs pour tous les niveaux scolaires
       </p>
     </div>

@@ -9,6 +9,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -20,6 +21,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -31,6 +33,7 @@
     opacity: 0;
     transform: translateX(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -42,6 +45,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -49,10 +53,12 @@
 }
 
 @keyframes shimmer {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -60,30 +66,36 @@
 
 /* Added new advanced animations for enhanced UI */
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.7;
   }
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
 }
 
 @keyframes glow {
+
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(23, 66, 248, 0.4);
   }
+
   50% {
     box-shadow: 0 0 0 10px rgba(23, 66, 248, 0);
   }
@@ -94,6 +106,7 @@
     opacity: 0;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -105,6 +118,7 @@
     opacity: 0;
     transform: rotate(-5deg) scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: rotate(0) scale(1);
@@ -115,6 +129,7 @@
   from {
     width: 0;
   }
+
   to {
     width: 100%;
   }
@@ -124,6 +139,7 @@
   0% {
     stroke-dashoffset: 50;
   }
+
   100% {
     stroke-dashoffset: 0;
   }
@@ -276,6 +292,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

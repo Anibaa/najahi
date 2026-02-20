@@ -56,19 +56,19 @@ export function BooksManagement({ books }: BooksManagementProps) {
           title: "Succès",
           description: "Livre supprimé avec succès",
         })
-        
+
         // Refresh the current page
         router.refresh()
-        
+
         // Also trigger a refresh of the home page cache
-        fetch('/', { 
+        fetch('/', {
           method: 'GET',
           cache: 'no-store',
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate'
           }
-        }).catch(() => {}) // Silent fail if this doesn't work
-        
+        }).catch(() => { }) // Silent fail if this doesn't work
+
       } catch (error) {
         toast({
           title: "Erreur",
@@ -83,7 +83,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "price" ? Number.parseFloat(value) : value,
+      [name]: name === "price" || name === "promoPrice" ? (value === "" ? undefined : Number.parseFloat(value)) : value,
     }))
   }
 
@@ -130,7 +130,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
         image: newImages.length > 0 ? newImages[0] : "", // Sync primary image
       }
     })
-    
+
     // Delete from Vercel Blob if it's a blob URL
     if (imageToRemove && imageToRemove.includes('blob.vercel-storage.com')) {
       deleteFromBlob(imageToRemove)
@@ -143,7 +143,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
       ...prev,
       descriptionImages: prev.descriptionImages?.filter((_, i) => i !== index) || [],
     }))
-    
+
     // Delete from Vercel Blob if it's a blob URL
     if (imageToRemove && imageToRemove.includes('blob.vercel-storage.com')) {
       deleteFromBlob(imageToRemove)
@@ -249,15 +249,15 @@ export function BooksManagement({ books }: BooksManagementProps) {
 
       // Refresh the current page and clear cache
       router.refresh()
-      
+
       // Also trigger a refresh of the home page cache
-      fetch('/', { 
+      fetch('/', {
         method: 'GET',
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
-      }).catch(() => {}) // Silent fail if this doesn't work
+      }).catch(() => { }) // Silent fail if this doesn't work
 
       setIsModalOpen(false)
       setFormData({ images: [], descriptionImages: [] })
@@ -320,7 +320,16 @@ export function BooksManagement({ books }: BooksManagementProps) {
               >
                 <td className="px-6 py-4 font-semibold text-foreground line-clamp-1">{book.title}</td>
                 <td className="px-6 py-4 text-muted-foreground hidden sm:table-cell text-sm">{book.author}</td>
-                <td className="px-6 py-4 font-bold text-primary">{book.price} DT</td>
+                <td className="px-6 py-4 font-bold text-primary">
+                  {book.promoPrice ? (
+                    <div className="flex flex-col">
+                      <span className="text-red-500 font-bold">{book.promoPrice} DT</span>
+                      <span className="text-muted-foreground line-through text-xs">{book.price} DT</span>
+                    </div>
+                  ) : (
+                    <span>{book.price} DT</span>
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   <span className={`text - sm font - semibold ${statusColors[book.status]}`}>{book.status}</span>
                 </td>
@@ -415,6 +424,18 @@ export function BooksManagement({ books }: BooksManagementProps) {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Prix Promo (Optionnel)</label>
+                  <input
+                    type="number"
+                    name="promoPrice"
+                    placeholder="Prix Promo"
+                    value={formData.promoPrice || ""}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-semibold text-foreground mb-2">Catégorie</label>
                   <select
                     name="category"
@@ -427,7 +448,7 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     <option value="writing">Writing</option>
                     <option value="cours">Cours</option>
                     <option value="devoirs">Devoirs</option>
-                    <option value="histoire">Histoire</option>
+                    <option value="Contes">Contes</option>
                   </select>
                 </div>
                 <div>
@@ -440,9 +461,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                     className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   >
                     <option value="" disabled>Choisir un niveau</option>
-                    <option value="primary">Primaire</option>
-                    <option value="secondary">Secondaire</option>
-                    <option value="university">Université</option>
+                    <option value="college">Collège</option>
+                    <option value="lycee">Lycée</option>
+                    <option value="primaire">Primaire</option>
                   </select>
                 </div>
 
@@ -523,9 +544,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       disabled={isUploadingGallery}
                     />
-                    <button 
-                      type="button" 
-                      className={`px-4 py-3 ${isUploadingGallery ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem] mr-2`} 
+                    <button
+                      type="button"
+                      className={`px-4 py-3 ${isUploadingGallery ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem] mr-2`}
                       title="Upload"
                       disabled={isUploadingGallery}
                     >
@@ -602,9 +623,9 @@ export function BooksManagement({ books }: BooksManagementProps) {
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           disabled={isUploadingDescription}
                         />
-                        <button 
-                          type="button" 
-                          className={`px-4 py-3 ${isUploadingDescription ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem]`} 
+                        <button
+                          type="button"
+                          className={`px-4 py-3 ${isUploadingDescription ? 'bg-gray-400' : 'bg-secondary hover:bg-secondary/80'} rounded-lg border border-border h-full flex items-center justify-center min-w-[3rem]`}
                           title="Upload"
                           disabled={isUploadingDescription}
                         >

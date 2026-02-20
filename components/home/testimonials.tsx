@@ -3,14 +3,14 @@ import { Star } from "lucide-react"
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Fatima Mahmoud",
-      role: "Étudiante Universitaire",
-      content: "Plateforme formidable qui m'a aidée à trouver les livres dont j'avais besoin à des prix abordables",
+      name: "Landolsi Boutheina",
+      role: "Parent",
+      content: "Merci infiniment pour votre exellent travail.. Bonne continuation",
       rating: 5,
     },
     {
       name: "Ali Saadi",
-      role: "Étudiant Secondaire",
+      role: "Parent",
       content: "Service excellent et livraison rapide, je reviens certainement",
       rating: 5,
     },
@@ -26,10 +26,10 @@ export function Testimonials() {
     <section className="py-12 md:py-20 px-4 md:px-8 bg-card border-t border-border">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-primary animate-fadeInUp">
-          Avis des Étudiants
+          Avis des Parents
         </h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto text-sm md:text-base animate-slideUp">
-          Écoutez ce que nos étudiants disent de leur expérience avec nous
+          Découvrez ce que les parents disent de leur expérience avec nous
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -43,13 +43,12 @@ export function Testimonials() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${
-                      i < Math.floor(testimonial.rating)
+                    className={`w-4 h-4 md:w-5 md:h-5 transition-all duration-300 ${i < Math.floor(testimonial.rating)
+                      ? "fill-secondary text-secondary group-hover:scale-110"
+                      : i < testimonial.rating
                         ? "fill-secondary text-secondary group-hover:scale-110"
-                        : i < testimonial.rating
-                          ? "fill-secondary text-secondary group-hover:scale-110"
-                          : "fill-muted text-muted"
-                    }`}
+                        : "fill-muted text-muted"
+                      }`}
                   />
                 ))}
               </div>

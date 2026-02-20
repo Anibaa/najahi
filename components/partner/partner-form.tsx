@@ -203,7 +203,7 @@ export function PartnerForm() {
             <option value="writing">Writing</option>
             <option value="cours">Cours</option>
             <option value="devoirs">Devoirs</option>
-            <option value="histoire">Histoire</option>
+            <option value="Contes">Contes</option>
           </select>
         </div>
 
@@ -220,9 +220,9 @@ export function PartnerForm() {
             className="w-full px-4 py-3 md:py-3.5 rounded-lg md:rounded-xl border border-border bg-background hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
           >
             <option value="" disabled>Choisir un niveau</option>
-            <option value="primary">Primaire</option>
-            <option value="secondary">Secondaire</option>
-            <option value="university">Université</option>
+            <option value="college">Collège</option>
+            <option value="lycee">Lycée</option>
+            <option value="primaire">Primaire</option>
           </select>
         </div>
 

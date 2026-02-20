@@ -56,12 +56,28 @@ export function FeaturedBooks({ books }: FeaturedBooksProps) {
 
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-lg md:text-xl font-bold text-primary group-hover:scale-110 transition-transform duration-300">
-                    {book.price} DT
-                  </span>
-                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
-                    {book.level === "primary" ? "Primaire" : book.level === "secondary" ? "Secondaire" : "Université"}
-                  </span>
+                  <div className="flex flex-col">
+                    {book.promoPrice ? (
+                      <>
+                        <span className="text-lg md:text-xl font-bold text-red-600 animate-pulse">{book.promoPrice} DT</span>
+                        <span className="text-xs text-muted-foreground line-through">{book.price} DT</span>
+                      </>
+                    ) : (
+                      <span className="text-lg md:text-xl font-bold text-primary group-hover:scale-110 transition-transform duration-300">
+                        {book.price} DT
+                      </span>
+                    )}
+                  </div>
+
+                  {book.promoPrice ? (
+                    <span className="text-xs font-bold text-white bg-red-600 px-2 py-1 rounded-full animate-bounce-subtle">
+                      -{Math.round(((book.price - book.promoPrice) / book.price) * 100 / 5) * 5}%
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
+                      {book.level === "college" ? "Collège" : book.level === "lycee" ? "Lycée" : "Primaire"}
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>
