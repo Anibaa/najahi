@@ -2,7 +2,7 @@ const ADMIN_STORAGE_KEY = "Tunitest_admin_auth"
 
 // Mock admin users
 const ADMIN_USERS = [
-  { username: "admin", password: "admin123" },
+  { username: "admin", password: "chiraz@Tunitest2026" },
   { username: "owner", password: "owner123" },
 ]
 

@@ -24,11 +24,6 @@ export function Footer() {
                   Devenir Partenaire
                 </Link>
               </li>
-              <li>
-                <Link href="/admin" className="hover:opacity-80 transition-opacity">
-                  Gestion
-                </Link>
-              </li>
             </ul>
           </div>
 
