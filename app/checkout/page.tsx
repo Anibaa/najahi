@@ -14,7 +14,7 @@ import type { CheckoutData } from "@/lib/types"
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { cart, total, clearCart } = useCart()
+  const { cart, subtotal, deliveryFee, total, clearCart } = useCart()
   const [formData, setFormData] = useState<CheckoutData>({
     name: "",
     email: "",
@@ -229,8 +229,25 @@ export default function CheckoutPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-border pt-4">
-                    <div className="flex justify-between font-bold text-lg animate-slideUp">
+                  <div className="border-t border-border pt-4 space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Sous-total :</span>
+                      <span className="font-medium">{subtotal.toFixed(2)} DT</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Livraison :</span>
+                      {deliveryFee === 0 ? (
+                        <span className="font-semibold text-green-600">Gratuite</span>
+                      ) : (
+                        <span className="font-medium">{deliveryFee.toFixed(2)} DT</span>
+                      )}
+                    </div>
+                    {subtotal < 100 && (
+                      <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                        Ajoutez {(100 - subtotal).toFixed(2)} DT pour la livraison gratuite
+                      </div>
+                    )}
+                    <div className="flex justify-between font-bold text-lg pt-3 border-t border-border animate-slideUp">
                       <span>Total :</span>
                       <span className="text-primary text-xl">{total.toFixed(2)} DT</span>
                     </div>

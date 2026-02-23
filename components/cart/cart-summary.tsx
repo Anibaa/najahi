@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 export function CartSummary() {
-  const { cart, subtotal, total } = useCart()
+  const { cart, subtotal, deliveryFee, total } = useCart()
 
   return (
     <div className="bg-white rounded-lg shadow-soft p-6 sticky top-20">
@@ -14,11 +14,24 @@ export function CartSummary() {
       <div className="space-y-4 mb-6">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Articles ({cart.length})</span>
-          <span className="font-semibold text-foreground">{subtotal.toFixed(2)} TND</span>
+          <span className="font-semibold text-foreground">{subtotal.toFixed(2)} DT</span>
         </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Livraison</span>
+          {deliveryFee === 0 ? (
+            <span className="font-semibold text-green-600">Gratuite</span>
+          ) : (
+            <span className="font-semibold text-foreground">{deliveryFee.toFixed(2)} DT</span>
+          )}
+        </div>
+        {subtotal < 100 && subtotal > 0 && (
+          <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+            Ajoutez {(100 - subtotal).toFixed(2)} DT pour la livraison gratuite
+          </div>
+        )}
         <div className="flex justify-between pt-4 border-t border-border">
           <span className="font-bold text-foreground">Total</span>
-          <span className="font-bold text-lg text-primary">{total.toFixed(2)} TND</span>
+          <span className="font-bold text-lg text-primary">{total.toFixed(2)} DT</span>
         </div>
       </div>
 
