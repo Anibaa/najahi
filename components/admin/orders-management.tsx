@@ -130,7 +130,7 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">N° Commande</p>
-                  <p className="font-mono font-bold">#{selectedOrder.id}</p>
+                  <p className="font-mono font-bold">#{selectedOrder.id.slice(0, 8)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Date</p>
