@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import type { Metadata } from "next"
 import { getBooks } from "@/lib/api"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
@@ -9,14 +10,40 @@ import { SearchResultsSummary } from "@/components/books/search-results-summary"
 
 const ITEMS_PER_PAGE = 12
 
-export const metadata = {
-  title: "Livres - Tunitest",
-  description: "Parcourez notre collection complète de livres éducatifs tunisiens",
-}
-
 // Ensure this page is not statically cached
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+export async function generateMetadata(): Promise<Metadata> {
+  const books = await getBooks()
+  const firstBookImage = books[0]?.image || "/placeholder.jpg"
+
+  return {
+    title: "Livres - Tunitest",
+    description: "Parcourez notre collection complète de livres éducatifs tunisiens",
+    openGraph: {
+      type: "website",
+      locale: "fr_TN",
+      url: "https://Tunitest.com/books",
+      title: "Livres - Tunitest",
+      description: "Parcourez notre collection complète de livres éducatifs tunisiens",
+      images: [
+        {
+          url: firstBookImage,
+          width: 300,
+          height: 400,
+          alt: "Livres Éducatifs",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Livres - Tunitest",
+      description: "Parcourez notre collection complète de livres éducatifs tunisiens",
+      images: [firstBookImage],
+    },
+  }
+}
 
 interface BooksPageProps {
   searchParams: Promise<{

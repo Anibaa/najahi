@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { getSliders, getBooks } from "@/lib/api"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
@@ -11,15 +12,41 @@ import { RecentlyViewed } from "@/components/home/recently-viewed"
 import { WhatsAppButton } from "@/components/home/whatsapp-button"
 import { TrustedBy } from "@/components/home/trusted-by"
 
-export const metadata = {
-  title: "Tunitest - Plateforme de Livres Éducatifs Tunisienne",
-  description:
-    "Découvrez les meilleurs livres éducatifs pour les étudiants tunisiens à tous les niveaux scolaires. Accédez à des milliers de titres, de la primaire à l'université.",
-}
-
 // Ensure this page is not statically cached
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+export async function generateMetadata(): Promise<Metadata> {
+  const sliders = await getSliders()
+  const firstSliderImage = sliders[0]?.image || "/banner1.png"
+
+  return {
+    title: "Tunitest - Plateforme de Livres Éducatifs Tunisienne",
+    description:
+      "Découvrez les meilleurs livres éducatifs pour les étudiants tunisiens à tous les niveaux scolaires. Accédez à des milliers de titres, de la primaire à l'université.",
+    openGraph: {
+      type: "website",
+      locale: "fr_TN",
+      url: "https://Tunitest.com",
+      title: "Tunitest - Plateforme de Livres Éducatifs",
+      description: "Découvrez les meilleurs livres éducatifs pour les étudiants tunisiens à tous les niveaux scolaires",
+      images: [
+        {
+          url: firstSliderImage,
+          width: 1200,
+          height: 630,
+          alt: "Tunitest - Livres Éducatifs",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Tunitest - Plateforme de Livres Éducatifs",
+      description: "Découvrez les meilleurs livres éducatifs pour les étudiants tunisiens",
+      images: [firstSliderImage],
+    },
+  }
+}
 
 export default async function Home() {
   const sliders = await getSliders()

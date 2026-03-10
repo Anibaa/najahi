@@ -20,9 +20,10 @@ export const metadata: Metadata = {
     description: "Plateforme intégrée pour acheter et vendre des livres éducatifs tunisiens",
     images: [
       {
-        url: "/og-image.png",
+        url: "/banner1.png",
         width: 1200,
         height: 630,
+        alt: "Tunitest - Livres Éducatifs",
       },
     ],
   },
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Tunitest",
     description: "Plateforme de Livres Éducatifs Tunisienne",
+    images: ["/banner1.png"],
   },
   icons: {
     icon: [
