@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, Edit2 } from "lucide-react"
+import { Eye, Edit2, Trash2 } from "lucide-react"
 import type { Order } from "@/lib/types"
 import { useEffect } from "react"
 
@@ -19,8 +19,10 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [editingStatus, setEditingStatus] = useState<Order["status"]>("Préparation")
   const [books, setBooks] = useState<any[]>([])
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     fetch("/api/books")
@@ -54,8 +56,34 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
         body: JSON.stringify({ status: editingStatus }),
       })
       setIsEditModalOpen(false)
+      window.location.reload()
     } catch (error) {
       console.error("Failed to update order:", error)
+    }
+  }
+
+  const handleDeleteOrder = (order: Order) => {
+    setSelectedOrder(order)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedOrder) return
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/orders/${selectedOrder.id}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        setIsDeleteModalOpen(false)
+        window.location.reload()
+      } else {
+        console.error("Failed to delete order")
+      }
+    } catch (error) {
+      console.error("Failed to delete order:", error)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -126,6 +154,13 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
                         title="Modifier statut"
                       >
                         <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteOrder(order)}
+                        className="p-2 hover:bg-destructive/10 text-destructive rounded transition-all hover:scale-110"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -270,6 +305,48 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
               <button
                 onClick={() => setIsEditModalOpen(false)}
                 className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors font-semibold"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && selectedOrder && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fadeInUp">
+          <div className="bg-white rounded-lg max-w-md w-full p-8">
+            <h3 className="text-2xl font-bold text-destructive mb-4">Supprimer la Commande</h3>
+            <p className="text-muted-foreground mb-6">
+              Êtes-vous sûr de vouloir supprimer la commande <span className="font-mono font-bold">#{selectedOrder.id.slice(0, 8)}</span> de{" "}
+              <span className="font-semibold">{selectedOrder.customerName}</span> ?
+              <br />
+              <span className="text-destructive font-semibold mt-2 block">Cette action est irréversible.</span>
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 bg-destructive hover:bg-destructive/90 text-white rounded-lg transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Suppression...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Supprimer
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Annuler
               </button>
