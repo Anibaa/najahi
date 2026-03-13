@@ -79,43 +79,59 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {orders.map((order, idx) => (
-              <tr
-                key={order.id}
-                className="hover:bg-muted/50 transition-colors animate-fadeInUp"
-                style={{ animationDelay: `${idx * 0.05}s` }}
-              >
-                <td className="px-6 py-4 font-mono text-foreground">#{order.id.slice(0, 8)}</td>
-                <td className="px-6 py-4 text-foreground font-medium">{order.customerName}</td>
-                <td className="px-6 py-4 text-muted-foreground hidden md:table-cell text-sm">{order.customerEmail}</td>
-                <td className="px-6 py-4 font-bold text-primary">{order.totalPrice.toFixed(2)} TND</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${statusColors[order.status]}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      onClick={() => handleViewDetails(order)}
-                      className="p-2 hover:bg-primary/10 text-primary rounded transition-all hover:scale-110"
-                      title="Voir détails"
+            {orders.map((order, idx) => {
+              // Calculate actual total based on current book prices (with promos)
+              const calculatedTotal = order.bookIds.reduce((sum, bookId, i) => {
+                const book = books.find((b) => b.id === bookId)
+                const price = book ? (book.promoPrice ?? book.price) : 0
+                const quantity = order.quantities[i] || 0
+                return sum + (price * quantity)
+              }, 0)
+              
+              // Add delivery fee (same logic as cart)
+              const DELIVERY_FEE = 7
+              const FREE_DELIVERY_THRESHOLD = 100
+              const deliveryFee = calculatedTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+              const totalWithDelivery = calculatedTotal + deliveryFee
+              
+              return (
+                <tr
+                  key={order.id}
+                  className="hover:bg-muted/50 transition-colors animate-fadeInUp"
+                  style={{ animationDelay: `${idx * 0.05}s` }}
+                >
+                  <td className="px-6 py-4 font-mono text-foreground">#{order.id.slice(0, 8)}</td>
+                  <td className="px-6 py-4 text-foreground font-medium">{order.customerName}</td>
+                  <td className="px-6 py-4 text-muted-foreground hidden md:table-cell text-sm">{order.customerEmail}</td>
+                  <td className="px-6 py-4 font-bold text-primary">{totalWithDelivery.toFixed(2)} TND</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${statusColors[order.status]}`}
                     >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleEditStatus(order)}
-                      className="p-2 hover:bg-accent/10 text-accent rounded transition-all hover:scale-110"
-                      title="Modifier statut"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleViewDetails(order)}
+                        className="p-2 hover:bg-primary/10 text-primary rounded transition-all hover:scale-110"
+                        title="Voir détails"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleEditStatus(order)}
+                        className="p-2 hover:bg-accent/10 text-accent rounded transition-all hover:scale-110"
+                        title="Modifier statut"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -151,21 +167,67 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
               </div>
 
               <div className="border-t border-border pt-4">
-                <p className="text-sm text-muted-foreground mb-2">Livres</p>
+                <p className="text-sm text-muted-foreground mb-2">Livres commandés</p>
                 <div className="space-y-2">
-                  {selectedOrder.bookIds.map((bookId, idx) => (
-                    <p key={idx} className="text-sm font-medium">
-                      {books.find((b) => b.id === bookId)?.title || `Livre #${bookId}`} x{selectedOrder.quantities[idx]}
-                    </p>
-                  ))}
+                  {selectedOrder.bookIds.map((bookId, idx) => {
+                    const book = books.find((b) => b.id === bookId)
+                    const price = book ? (book.promoPrice ?? book.price) : 0
+                    const quantity = selectedOrder.quantities[idx]
+                    const subtotal = price * quantity
+                    
+                    return (
+                      <div key={idx} className="flex justify-between items-start text-sm border-b border-border/50 pb-2">
+                        <div className="flex-1">
+                          <p className="font-medium">{book?.title || `Livre #${bookId}`}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {price.toFixed(2)} DT x {quantity}
+                            {book?.promoPrice && (
+                              <span className="ml-2 text-red-600 font-semibold">(Prix promo)</span>
+                            )}
+                          </p>
+                        </div>
+                        <p className="font-semibold text-primary ml-2">{subtotal.toFixed(2)} DT</p>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
 
-              <div className="border-t border-border pt-4">
-                <p className="flex justify-between font-bold text-lg text-primary">
-                  <span>Montant total:</span>
-                  <span>{selectedOrder.totalPrice.toFixed(2)} TND</span>
-                </p>
+              <div className="border-t border-border pt-4 space-y-2">
+                {(() => {
+                  const subtotal = selectedOrder.bookIds.reduce((sum, bookId, i) => {
+                    const book = books.find((b) => b.id === bookId)
+                    const price = book ? (book.promoPrice ?? book.price) : 0
+                    const quantity = selectedOrder.quantities[i] || 0
+                    return sum + (price * quantity)
+                  }, 0)
+                  
+                  const DELIVERY_FEE = 7
+                  const FREE_DELIVERY_THRESHOLD = 100
+                  const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+                  const total = subtotal + deliveryFee
+                  
+                  return (
+                    <>
+                      <p className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Sous-total:</span>
+                        <span className="font-semibold">{subtotal.toFixed(2)} TND</span>
+                      </p>
+                      <p className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Livraison:</span>
+                        {deliveryFee === 0 ? (
+                          <span className="font-semibold text-green-600">Gratuite</span>
+                        ) : (
+                          <span className="font-semibold">{deliveryFee.toFixed(2)} TND</span>
+                        )}
+                      </p>
+                      <p className="flex justify-between font-bold text-lg text-primary pt-2 border-t border-border">
+                        <span>Montant total:</span>
+                        <span>{total.toFixed(2)} TND</span>
+                      </p>
+                    </>
+                  )
+                })()}
               </div>
             </div>
 

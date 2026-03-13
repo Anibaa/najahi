@@ -214,20 +214,23 @@ export default function CheckoutPage() {
                 <div className="bg-white rounded-lg shadow-soft p-6 sticky top-20 animate-slideInRight">
                   <h2 className="text-lg font-bold text-foreground mb-4">Résumé de la commande</h2>
                   <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                    {cart.map((item, idx) => (
-                      <div
-                        key={item.book.id}
-                        className="flex justify-between text-sm animate-fadeInUp"
-                        style={{ animationDelay: `${idx * 0.05}s` }}
-                      >
-                        <span className="text-muted-foreground line-clamp-1">
-                          {item.book.title} <span className="font-semibold">x{item.quantity}</span>
-                        </span>
-                        <span className="font-medium flex-shrink-0 ml-2">
-                          {(item.book.price * item.quantity).toFixed(2)} DT
-                        </span>
-                      </div>
-                    ))}
+                    {cart.map((item, idx) => {
+                      const price = item.book.promoPrice ?? item.book.price
+                      return (
+                        <div
+                          key={item.book.id}
+                          className="flex justify-between text-sm animate-fadeInUp"
+                          style={{ animationDelay: `${idx * 0.05}s` }}
+                        >
+                          <span className="text-muted-foreground line-clamp-1">
+                            {item.book.title} <span className="font-semibold">x{item.quantity}</span>
+                          </span>
+                          <span className="font-medium flex-shrink-0 ml-2">
+                            {(price * item.quantity).toFixed(2)} DT
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                   <div className="border-t border-border pt-4 space-y-3">
                     <div className="flex justify-between text-sm">

@@ -99,7 +99,10 @@ export function useCart() {
     setCart([])
   }, [])
 
-  const subtotal = cart.reduce((sum, item) => sum + item.book.price * item.quantity, 0)
+  const subtotal = cart.reduce((sum, item) => {
+    const price = item.book.promoPrice ?? item.book.price
+    return sum + price * item.quantity
+  }, 0)
   const DELIVERY_FEE = 7
   const FREE_DELIVERY_THRESHOLD = 100
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE

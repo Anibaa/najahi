@@ -25,7 +25,16 @@ export function CartItems() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground line-clamp-2 mb-2">{item.book.title}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{item.book.author}</p>
-                <p className="text-lg font-bold text-primary">{item.book.price} TND</p>
+                <div className="flex items-center gap-2">
+                  {item.book.promoPrice ? (
+                    <>
+                      <p className="text-lg font-bold text-primary">{item.book.promoPrice} TND</p>
+                      <p className="text-sm text-muted-foreground line-through">{item.book.price} TND</p>
+                    </>
+                  ) : (
+                    <p className="text-lg font-bold text-primary">{item.book.price} TND</p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col items-end justify-between">
