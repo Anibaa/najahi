@@ -117,7 +117,7 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
               }, 0)
               
               // Add delivery fee (same logic as cart)
-              const DELIVERY_FEE = 7
+              const DELIVERY_FEE = 8
               const FREE_DELIVERY_THRESHOLD = 100
               const deliveryFee = calculatedTotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
               const totalWithDelivery = calculatedTotal + deliveryFee
@@ -237,7 +237,7 @@ export function OrdersManagement({ orders }: OrdersManagementProps) {
                     return sum + (price * quantity)
                   }, 0)
                   
-                  const DELIVERY_FEE = 7
+                  const DELIVERY_FEE = 8
                   const FREE_DELIVERY_THRESHOLD = 100
                   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
                   const total = subtotal + deliveryFee
