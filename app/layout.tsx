@@ -1,8 +1,11 @@
 import type React from "react"
+import { Suspense } from "react"
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import GoogleAnalytics from "@/components/analytics/google-analytics"
+import { MetaPixel } from "@/components/analytics/meta-pixel"
+import { getPublicMetaPixelSettings } from "@/lib/settings"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -64,15 +67,20 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const metaPixelSettings = await getPublicMetaPixelSettings()
+
   return (
     <html lang="fr" dir="ltr">
       <body className={`font-sans antialiased`}>
         <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <MetaPixel settings={metaPixelSettings} />
+        </Suspense>
         {children}
         <Analytics />
       </body>

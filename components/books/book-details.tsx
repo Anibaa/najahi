@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ShoppingCart, Package, Truck, ShieldCheck, Zap } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { useToast } from "@/hooks/use-toast"
+import { trackMetaEvent } from "@/lib/analytics/metaPixel"
 import { saveFavorite, isFavorited } from "@/lib/personalization"
 import { BookGallery } from "./book-gallery"
 import type { Book } from "@/lib/types"
@@ -26,8 +27,49 @@ export function BookDetails({ book }: BookDetailsProps) {
     setIsFavorite(isFavorited(book.id))
   }, [book.id])
 
+  useEffect(() => {
+    let cancelled = false
+    let attempts = 0
+    let retryTimeout: number | undefined
+
+    const sendViewContent = () => {
+      if (cancelled) return
+
+      attempts += 1
+      const tracked = trackMetaEvent(
+        "ViewContent",
+        {
+          content_ids: [book.id],
+          content_name: book.title,
+          content_type: "product",
+          value: getBookTrackingPrice(book),
+          currency: "TND",
+          content_category: book.category,
+        },
+        {
+          dedupeKey: `ViewContent:${book.id}`,
+          dedupeWindowMs: 2000,
+        },
+      )
+
+      if (!tracked && attempts < 10) {
+        retryTimeout = window.setTimeout(sendViewContent, 250)
+      }
+    }
+
+    retryTimeout = window.setTimeout(sendViewContent, 250)
+
+    return () => {
+      cancelled = true
+      if (retryTimeout) {
+        window.clearTimeout(retryTimeout)
+      }
+    }
+  }, [book.category, book.id, book.price, book.promoPrice, book.title])
+
   const handleAddToCart = () => {
     addToCart(book, quantity)
+    trackBookAddToCart(book, quantity)
     toast({
       title: "Succès",
       description: `${quantity} exemplaire(s) de "${book.title}" ajouté(e)(s) au panier`,
@@ -37,6 +79,7 @@ export function BookDetails({ book }: BookDetailsProps) {
   const handleBuyNow = async () => {
     setIsLoading(true)
     addToCart(book, quantity)
+    trackBookAddToCart(book, quantity)
     // Simulate processing
     await new Promise((resolve) => setTimeout(resolve, 300))
     router.push("/checkout")
@@ -218,4 +261,21 @@ export function BookDetails({ book }: BookDetailsProps) {
       </div>
     </div>
   )
+}
+
+function getBookTrackingPrice(book: Book): number {
+  return book.promoPrice ?? book.price
+}
+
+function trackBookAddToCart(book: Book, quantity: number): void {
+  if (book.status === "Hors stock") return
+
+  trackMetaEvent("AddToCart", {
+    content_ids: [book.id],
+    content_name: book.title,
+    content_type: "product",
+    value: getBookTrackingPrice(book),
+    currency: "TND",
+    quantity,
+  })
 }

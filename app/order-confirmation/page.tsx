@@ -1,12 +1,93 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { CheckCircle2 } from "lucide-react"
+import { trackMetaEvent, type MetaEventPayloads } from "@/lib/analytics/metaPixel"
+
+type MetaPurchaseResponse = {
+  success: boolean
+  shouldTrack?: boolean
+  data?: {
+    eventId: string
+    payload: MetaEventPayloads["Purchase"]
+  }
+}
 
 export default function OrderConfirmationPage() {
-  const orderNumber = `TND-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+  const [orderId, setOrderId] = useState<string | null>(null)
+
+  useEffect(() => {
+    setOrderId(new URLSearchParams(window.location.search).get("orderId"))
+  }, [])
+
+  useEffect(() => {
+    if (!orderId) return
+
+    const trackedOrderId = orderId
+    const storageKey = `tunitest_meta_purchase:${trackedOrderId}`
+    try {
+      if (localStorage.getItem(storageKey)) return
+    } catch {
+      // Ignore unavailable localStorage.
+    }
+
+    let cancelled = false
+    let retryTimeout: number | undefined
+
+    async function preparePurchaseTracking() {
+      try {
+        const response = await fetch(`/api/orders/${encodeURIComponent(trackedOrderId)}/meta-purchase`, {
+          method: "POST",
+        })
+        const json = (await response.json()) as MetaPurchaseResponse
+
+        if (!response.ok || !json.success || !json.shouldTrack || !json.data || cancelled) {
+          return
+        }
+
+        let attempts = 0
+        const sendPurchase = () => {
+          if (cancelled || !json.data) return
+
+          attempts += 1
+          const tracked = trackMetaEvent("Purchase", json.data.payload, {
+            eventId: json.data.eventId,
+            dedupeKey: `Purchase:${trackedOrderId}`,
+            dedupeWindowMs: 60_000,
+          })
+
+          if (tracked) {
+            try {
+              localStorage.setItem(storageKey, new Date().toISOString())
+            } catch {
+              // Ignore unavailable localStorage.
+            }
+            return
+          }
+
+          if (attempts < 10) {
+            retryTimeout = window.setTimeout(sendPurchase, 250)
+          }
+        }
+
+        retryTimeout = window.setTimeout(sendPurchase, 250)
+      } catch {
+        // Tracking failures must never affect the confirmation page.
+      }
+    }
+
+    void preparePurchaseTracking()
+
+    return () => {
+      cancelled = true
+      if (retryTimeout) {
+        window.clearTimeout(retryTimeout)
+      }
+    }
+  }, [orderId])
 
   return (
     <>

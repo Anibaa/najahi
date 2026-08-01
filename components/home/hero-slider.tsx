@@ -14,7 +14,7 @@ export function HeroSlider({ items }: HeroSliderProps) {
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   useEffect(() => {
-    if (!isAutoPlay) return
+    if (!isAutoPlay || items.length < 2) return
 
     const timer = setInterval(() => {
       setIsTransitioning(true)
@@ -26,6 +26,7 @@ export function HeroSlider({ items }: HeroSliderProps) {
   }, [isAutoPlay, items.length])
 
   const goToPrevious = () => {
+    if (!items.length) return
     setIsAutoPlay(false)
     setIsTransitioning(true)
     setCurrentIndex((prev) => (prev - 1 + items.length) % items.length)
@@ -33,6 +34,7 @@ export function HeroSlider({ items }: HeroSliderProps) {
   }
 
   const goToNext = () => {
+    if (!items.length) return
     setIsAutoPlay(false)
     setIsTransitioning(true)
     setCurrentIndex((prev) => (prev + 1) % items.length)

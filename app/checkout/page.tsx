@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useCart } from "@/hooks/use-cart"
 import { useRouter } from "next/navigation"
 import { Header } from "@/components/layout/header"
@@ -10,11 +10,21 @@ import { Footer } from "@/components/layout/footer"
 import Link from "next/link"
 import { ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react"
 import { LoadingSpinner } from "@/components/common/loading-spinner"
+import { trackMetaEvent } from "@/lib/analytics/metaPixel"
 import type { CheckoutData } from "@/lib/types"
+
+type CreateOrderResponse = {
+  success: boolean
+  data?: {
+    id?: string
+  }
+  error?: string
+}
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { cart, subtotal, deliveryFee, total, clearCart } = useCart()
+  const { cart, subtotal, deliveryFee, total, clearCart, isLoading: isCartLoading } = useCart()
+  const checkoutTrackedRef = useRef(false)
   const [formData, setFormData] = useState<CheckoutData>({
     name: "",
     email: "",
@@ -25,6 +35,71 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
+  const checkoutSignature = useMemo(
+    () => cart.map((item) => `${item.book.id}:${item.quantity}`).sort().join("|"),
+    [cart],
+  )
+
+  useEffect(() => {
+    if (isCartLoading || cart.length === 0 || isSuccess || checkoutTrackedRef.current || !checkoutSignature) return
+
+    const storageKey = `tunitest_meta_initiate_checkout:${checkoutSignature}`
+    try {
+      if (sessionStorage.getItem(storageKey)) {
+        checkoutTrackedRef.current = true
+        return
+      }
+    } catch {
+      // Ignore unavailable sessionStorage.
+    }
+
+    let cancelled = false
+    let attempts = 0
+    let retryTimeout: number | undefined
+
+    const sendInitiateCheckout = () => {
+      if (cancelled || checkoutTrackedRef.current) return
+
+      attempts += 1
+      const tracked = trackMetaEvent(
+        "InitiateCheckout",
+        {
+          content_ids: cart.map((item) => item.book.id),
+          content_type: "product",
+          num_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+          value: total,
+          currency: "TND",
+        },
+        {
+          dedupeKey: `InitiateCheckout:${checkoutSignature}`,
+          dedupeWindowMs: 5000,
+        },
+      )
+
+      if (tracked) {
+        checkoutTrackedRef.current = true
+        try {
+          sessionStorage.setItem(storageKey, new Date().toISOString())
+        } catch {
+          // Ignore unavailable sessionStorage.
+        }
+        return
+      }
+
+      if (attempts < 10) {
+        retryTimeout = window.setTimeout(sendInitiateCheckout, 250)
+      }
+    }
+
+    retryTimeout = window.setTimeout(sendInitiateCheckout, 250)
+
+    return () => {
+      cancelled = true
+      if (retryTimeout) {
+        window.clearTimeout(retryTimeout)
+      }
+    }
+  }, [cart, checkoutSignature, isCartLoading, isSuccess, total])
 
   if (cart.length === 0 && !isSuccess) {
     return (
@@ -77,11 +152,17 @@ export default function CheckoutPage() {
 
       if (!response.ok) throw new Error("Échec de la création de la commande")
 
+      const json = (await response.json()) as CreateOrderResponse
+
+      if (!json.success || !json.data?.id) {
+        throw new Error(json.error || "Echec de la creation de la commande")
+      }
+
       setIsSuccess(true)
 
       setTimeout(() => {
         clearCart()
-        router.push("/order-confirmation")
+        router.push(`/order-confirmation?orderId=${encodeURIComponent(json.data?.id || "")}`)
       }, 1500)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue lors de la création de votre commande")

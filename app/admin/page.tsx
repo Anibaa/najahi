@@ -8,6 +8,7 @@ import { BooksManagement } from "@/components/admin/books-management"
 import { OrdersManagement } from "@/components/admin/orders-management"
 import { SlidersManagement } from "@/components/admin/sliders-management"
 import { PartnersManagement } from "@/components/admin/partners-management"
+import { MetaPixelSettings } from "@/components/admin/settings/meta-pixel-settings"
 import { AdminGuard } from "@/lib/admin-guard"
 
 interface AdminPageProps {
@@ -55,7 +56,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             {tab === "sliders" && (
               <Suspense fallback={<div className="text-muted-foreground text-sm">Chargement des promotions...</div>}>
-                <SlidersManagement sliders={sliders} />
+                <>
+                  <SlidersManagement sliders={sliders} />
+                  <MetaPixelSettings />
+                </>
               </Suspense>
             )}
 

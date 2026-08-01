@@ -10,6 +10,8 @@ const OrderSchema = new Schema({
     address: { type: String, required: true },
     paymentMethod: { type: String, default: 'Card' },
     status: { type: String, enum: ['Préparation', 'Livraison', 'Livré'], default: 'Préparation' },
+    metaPurchaseTrackedAt: { type: Date },
+    metaPurchaseEventId: { type: String },
     createdAt: { type: Date, default: Date.now },
 }, {
     timestamps: true,

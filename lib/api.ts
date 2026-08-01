@@ -4,7 +4,41 @@ import OrderModel from "@/lib/models/order.model"
 import SliderModel from "@/lib/models/slider.model"
 import PartnerModel from "@/lib/models/partner.model"
 import type { Book, SliderItem, Order, Partner } from "./types"
-import { mockPartners } from "./mock-data"
+
+type BookFilters = {
+  category?: string
+  level?: string
+  language?: string
+  search?: string
+}
+
+const getErrorName = (error: unknown) =>
+  error && typeof error === "object" && "name" in error ? String((error as { name?: unknown }).name) : ""
+
+const getErrorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error))
+
+const isMongoConnectivityError = (error: unknown) => {
+  const name = getErrorName(error)
+  const message = getErrorMessage(error)
+
+  return (
+    name === "MongoServerSelectionError" ||
+    name === "MongoNetworkError" ||
+    /ENOTFOUND|ECONNREFUSED|ETIMEDOUT|ECONNRESET|querySrv|server selection timed out/i.test(message)
+  )
+}
+
+const logReadFailure = (resource: string, error: unknown) => {
+  if (process.env.NODE_ENV !== "development") return
+
+  console.warn(`Failed to load ${resource}; returning an empty fallback: ${getErrorMessage(error)}`)
+}
+
+const logConnectivityFailure = (resource: string, error: unknown) => {
+  if (isMongoConnectivityError(error)) {
+    logReadFailure(resource, error)
+  }
+}
 
 // Helper to sanitize mongoose doc
 const sanitize = (doc: any): Book => {
@@ -27,6 +61,7 @@ const sanitizeOrder = (doc: any): Order => {
   delete obj._id;
   delete obj.__v;
   if (obj.createdAt) obj.createdAt = new Date(obj.createdAt).toISOString();
+  if (obj.metaPurchaseTrackedAt) obj.metaPurchaseTrackedAt = new Date(obj.metaPurchaseTrackedAt).toISOString();
   return obj as Order;
 }
 
@@ -49,53 +84,54 @@ const sanitizePartner = (doc: any): Partner => {
 }
 
 // Books API
-export async function getBooks(filters?: {
-  category?: string
-  level?: string
-  language?: string
-  search?: string
-}): Promise<Book[]> {
-  await dbConnect();
+export async function getBooks(filters?: BookFilters): Promise<Book[]> {
+  try {
+    await dbConnect();
 
-  const query: any = {};
-  if (filters?.category) query.category = filters.category;
-  if (filters?.level) query.level = filters.level;
-  if (filters?.language) query.language = filters.language;
+    const query: any = {};
+    if (filters?.category) query.category = filters.category;
+    if (filters?.level) query.level = filters.level;
+    if (filters?.language) query.language = filters.language;
 
-  // Add search functionality
-  if (filters?.search) {
-    const searchRegex = new RegExp(filters.search, 'i'); // Case-insensitive search
-    query.$or = [
-      { title: searchRegex },
-      { author: searchRegex },
-      { description: searchRegex },
-      { category: searchRegex },
-      { level: searchRegex },
-      { language: searchRegex },
-      // Search in specifications if they exist
-      { 'specifications.subject': searchRegex },
-      { 'specifications.publisher': searchRegex },
-      { 'specifications.isbn': searchRegex },
-    ];
+    // Add search functionality
+    if (filters?.search) {
+      const searchRegex = new RegExp(filters.search, 'i'); // Case-insensitive search
+      query.$or = [
+        { title: searchRegex },
+        { author: searchRegex },
+        { description: searchRegex },
+        { category: searchRegex },
+        { level: searchRegex },
+        { language: searchRegex },
+        // Search in specifications if they exist
+        { 'specifications.subject': searchRegex },
+        { 'specifications.publisher': searchRegex },
+        { 'specifications.isbn': searchRegex },
+      ];
+    }
+
+    const books = await BookModel.find(query).sort({ createdAt: -1 });
+    return books.map(doc => sanitize(doc));
+  } catch (error) {
+    logReadFailure("books", error)
+    return []
   }
-
-  const books = await BookModel.find(query).sort({ createdAt: -1 });
-  return books.map(doc => sanitize(doc));
 }
 
 export async function getBookById(id: string): Promise<Book | null> {
-  await dbConnect();
   try {
+    await dbConnect();
     const book = await BookModel.findById(id);
     return book ? sanitize(book) : null;
   } catch (error) {
+    logConnectivityFailure("book", error)
     return null;
   }
 }
 
 export async function getRelatedBooks(bookId: string, limit = 4): Promise<Book[]> {
-  await dbConnect();
   try {
+    await dbConnect();
     const book = await BookModel.findById(bookId);
     if (!book) return [];
 
@@ -106,23 +142,30 @@ export async function getRelatedBooks(bookId: string, limit = 4): Promise<Book[]
 
     return related.map(doc => sanitize(doc));
   } catch (error) {
+    logConnectivityFailure("related books", error)
     return [];
   }
 }
 
 // Orders API (Mongo)
 export async function getOrders(): Promise<Order[]> {
-  await dbConnect();
-  const orders = await OrderModel.find().sort({ createdAt: -1 });
-  return orders.map((doc: any) => sanitizeOrder(doc));
+  try {
+    await dbConnect();
+    const orders = await OrderModel.find().sort({ createdAt: -1 });
+    return orders.map((doc: any) => sanitizeOrder(doc));
+  } catch (error) {
+    logReadFailure("orders", error)
+    return []
+  }
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {
-  await dbConnect();
   try {
+    await dbConnect();
     const order = await OrderModel.findById(id);
     return order ? sanitizeOrder(order) : null;
   } catch (error) {
+    logConnectivityFailure("order", error)
     return null;
   }
 }
@@ -154,17 +197,23 @@ export async function deleteOrder(id: string): Promise<boolean> {
 }
 // Slider API (Mongo)
 export async function getSliders(): Promise<SliderItem[]> {
-  await dbConnect();
-  const sliders = await SliderModel.find().sort({ createdAt: -1 });
-  return sliders.map((doc: any) => sanitizeSlider(doc));
+  try {
+    await dbConnect();
+    const sliders = await SliderModel.find().sort({ createdAt: -1 });
+    return sliders.map((doc: any) => sanitizeSlider(doc));
+  } catch (error) {
+    logReadFailure("sliders", error)
+    return []
+  }
 }
 
 export async function getSliderById(id: string): Promise<SliderItem | null> {
-  await dbConnect();
   try {
+    await dbConnect();
     const slider = await SliderModel.findById(id);
     return slider ? sanitizeSlider(slider) : null;
   } catch (error) {
+    logConnectivityFailure("slider", error)
     return null;
   }
 }
@@ -212,9 +261,14 @@ export async function deleteSlider(id: string): Promise<boolean> {
 // Partners API
 // Partners API
 export async function getPartners(): Promise<Partner[]> {
-  await dbConnect();
-  const partners = await PartnerModel.find().sort({ createdAt: -1 });
-  return partners.map((doc: any) => sanitizePartner(doc));
+  try {
+    await dbConnect();
+    const partners = await PartnerModel.find().sort({ createdAt: -1 });
+    return partners.map((doc: any) => sanitizePartner(doc));
+  } catch (error) {
+    logReadFailure("partners", error)
+    return []
+  }
 }
 
 export async function createPartner(partner: Omit<Partner, "id" | "createdAt">): Promise<Partner> {

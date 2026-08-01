@@ -5,6 +5,22 @@ export type Language = "ar" | "fr" | "en"
 export type BookStatus = "En stock" | "Hors stock" | "Préparation" | "Livraison" | "Livré"
 export type OrderStatus = "Préparation" | "Livraison" | "Livré"
 
+export interface MetaPixelEventSettings {
+  pageView: boolean
+  viewContent: boolean
+  addToCart: boolean
+  initiateCheckout: boolean
+  purchase: boolean
+}
+
+export interface MetaPixelSettings {
+  enabled: boolean
+  pixelId: string
+  events: MetaPixelEventSettings
+}
+
+export type PublicMetaPixelSettings = MetaPixelSettings
+
 export interface Book {
   id: string
   title: string
@@ -69,6 +85,8 @@ export interface Order {
   address: string // Added address
   paymentMethod: "Cash" | "Card" // Added payment method
   status: OrderStatus // Added status
+  metaPurchaseTrackedAt?: Date | string
+  metaPurchaseEventId?: string
   createdAt: Date
 }
 

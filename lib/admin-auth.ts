@@ -11,7 +11,7 @@ export function validateAdminCredentials(username: string, password: string): bo
 }
 
 export function setAdminSession(username: string): void {
-  const token = Buffer.from(`${username}:${Date.now()}`).toString("base64")
+  const token = encodeBase64(`${username}:${Date.now()}`)
   sessionStorage.setItem(ADMIN_STORAGE_KEY, token)
 }
 
@@ -27,5 +27,46 @@ export function clearAdminSession(): void {
 
 export function isAdminAuthenticated(): boolean {
   const session = getAdminSession()
-  return !!session
+  return isValidAdminSessionToken(session)
+}
+
+export function getAdminApiHeaders(): HeadersInit {
+  const session = getAdminSession()
+  return session ? { "x-admin-session": session } : {}
+}
+
+export function isAdminRequest(request: Request): boolean {
+  return isValidAdminSessionToken(request.headers.get("x-admin-session"))
+}
+
+export function isValidAdminSessionToken(token: string | null): boolean {
+  if (!token) return false
+
+  const decoded = decodeBase64(token)
+  if (!decoded) return false
+
+  const [username, issuedAt] = decoded.split(":")
+  const timestamp = Number(issuedAt)
+
+  return ADMIN_USERS.some((user) => user.username === username) && Number.isFinite(timestamp) && timestamp > 0
+}
+
+function encodeBase64(value: string): string {
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    return window.btoa(value)
+  }
+
+  return Buffer.from(value).toString("base64")
+}
+
+function decodeBase64(value: string): string | null {
+  try {
+    if (typeof window !== "undefined" && typeof window.atob === "function") {
+      return window.atob(value)
+    }
+
+    return Buffer.from(value, "base64").toString("utf8")
+  } catch {
+    return null
+  }
 }
